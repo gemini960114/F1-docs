@@ -5,6 +5,7 @@
 # ==============================================================================
 
 # 預設 Login Node 的 InfiniBand 內網 IP 與連接埠
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROXY_HOST="${1:-10.200.160.1}"
 PROXY_PORT="${2:-8888}"
 AUTH_FILE="${HOME}/.proxy_auth"
@@ -34,4 +35,4 @@ echo "✅ 計算節點 Proxy 環境變數已設定完畢！"
 echo "   http_proxy  = ${http_proxy}"
 echo "   https_proxy = ${https_proxy}"
 echo "   no_proxy    = ${no_proxy}"
-echo "   💡 提醒: 請確認登入節點已啟動 Proxy (執行 bash ~/hpc-tutorial/07-compute-node-proxy/scripts/start.sh)"
+echo "   💡 提醒: 請確認登入節點已啟動 Proxy (執行 bash ${SCRIPT_DIR}/start.sh)"
