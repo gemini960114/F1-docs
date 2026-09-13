@@ -49,7 +49,7 @@
 3. **網路隔離與 Proxy**：
    - 計算節點預設無外網。若腳本需要下載資料或模型，必須載入 HTTP Proxy：
      `source ~/hpc-tutorial/07-compute-node-proxy/scripts/set_compute_env.sh 10.200.160.1 8888`
-   - 同時確保 `no_proxy` 包含 `*.nchc.org.tw,*.genai.nchc.org.tw`，避免內網請求被導向外網。
+   - 同時確保 `no_proxy` 包含基礎內網網段（`localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12`），避免內部通訊被誤轉送。注意切勿隨意加入 `*.nchc.org.tw` 萬用字元，避免公開網站直連逾時。
 
 ---
 

@@ -229,10 +229,10 @@ sbatch job_test_proxy.slurm
 * **原因**：NCCL 或 OpenMPI 在節點間通訊時，誤把內部內網 IP 導向 Proxy。
 * **解法**：務必設定 `no_proxy` 環境變數排除叢集內網網段：
   ```bash
-  export no_proxy="localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,*.nchc.org.tw"
+  export no_proxy="localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12"
   export NO_PROXY="${no_proxy}"
   ```
-  *(腳本 `set_compute_env.sh` 已經預設幫您加入此設定)*
+  *(腳本 `set_compute_env.sh` 已經預設幫您加入此設定。⚠️ **注意**：切勿隨意加入 `*.nchc.org.tw` 萬用字元，否則連線至 `www.nchc.org.tw` 官網等公開網站時會因計算節點無外網直連而超時失敗)*
 
 ### Q4: 登入節點重新開機後服務中斷
 * **說明**：登入節點為 Linux 實體機或 VM，若管理員維護重開機，tmux 工作階段會消失。重新連上登入節點後，只需再跑一次 `bash start.sh` 即可快速復原。

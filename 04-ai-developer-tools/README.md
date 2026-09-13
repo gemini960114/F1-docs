@@ -295,13 +295,14 @@ opencode run -m medusa-portal/Devstral-2-123B-Instruct-2512 "寫一個 Slurm 批
 
 > [!WARNING]
 > **嚴禁將內網請求導向對外 Proxy！**  
-> 如果在計算節點設定了 `http_proxy`，必須確保 `no_proxy` 包含國網內網網段：
+> 如果在計算節點設定了 `http_proxy`，必須確保 `no_proxy` 包含國網內網網段與內部專用端點：
 > ```bash
-> export no_proxy="localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,*.nchc.org.tw,*.genai.nchc.org.tw,25a-*"
+> export no_proxy="localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,inner-medusa.genai.nchc.org.tw,25a-*"
 > export NO_PROXY="${no_proxy}"
 > ```
 > 否則內部請求會被送往外網 Proxy 轉發，導致 `inner-medusa` 連線失敗（`504 Gateway Timeout` 或 `Host Unreachable`）。  
-> *(第 07 章的 `set_compute_env.sh` 已經預設為您設定好此排除清單！)*
+> ⚠️ **重要避坑提醒**：切勿隨意加入 `*.nchc.org.tw` 萬用字元！因為這會導致連線至 `www.nchc.org.tw` 等公開網站時被誤判為內網直連，而計算節點無外網直連會導致連線逾時失敗。若需存取國網內部專屬服務，請精確指定主機名稱（如 `inner-medusa.genai.nchc.org.tw`）。  
+> *(第 07 章的 `set_compute_env.sh` 已經預設為您設定好安全的基礎內網排除清單！)*
 
 ---
 

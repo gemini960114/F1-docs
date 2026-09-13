@@ -58,4 +58,27 @@ bash ~/hpc-tutorial/09-skills-hub/slurm-job-advisor/scripts/validate_slurm.sh yo
 
 # 3. 診斷登入節點 Proxy 狀態與內網 IP (compute-node-proxy)
 bash ~/hpc-tutorial/09-skills-hub/compute-node-proxy/scripts/check_proxy.sh
+
+# 4. 啟動與關閉登入節點 Proxy 常駐服務 (compute-node-proxy)
+bash ~/hpc-tutorial/09-skills-hub/compute-node-proxy/scripts/start.sh
+bash ~/hpc-tutorial/09-skills-hub/compute-node-proxy/scripts/stop.sh
+
+# 5. 測試計算節點代理連通性 (compute-node-proxy)
+bash ~/hpc-tutorial/09-skills-hub/compute-node-proxy/scripts/test_compute_connection.sh
 ```
+
+---
+
+## 💡 四大技能實戰對話範例 (Interactive Walkthrough)
+
+想了解 AI Agent 如何在真實 HPC 情境中靈活運用這 4 大技能進行多輪問答引導、資源規劃防呆、憑證保護與錯誤排查？
+
+👉 請參閱官方完整教學手冊：  
+**[第 09 章：HPC AI Agent 技能總匯庫 第 8 節實戰範例](../guide/09_hpc_skills_hub.html#_8-四大-hpc-ai-agent-skills-實戰對話範例-4-round-interactive-walkthrough)**
+
+內含 4 大完整輪次對話紀錄（含使用者輸入、AI 多輪追問、產出驗證與派送）：
+1. **第一輪（`slurm-job-advisor`）**：派送一般運算作業，資源規劃與免扣點預檢
+2. **第二輪（`compute-node-proxy`）**：計算節點需要連外網下載資料，憑證保護與連線逾時排查
+3. **第三輪（`ai-agent-slurm-pipeline`）**：把互動式多步驟腳本轉換為鏈式批次管線
+4. **第四輪（`web-service-reverse-proxy`）**：在 OOD 子路徑背景啟動 Web 服務與動態 Port 轉發
+

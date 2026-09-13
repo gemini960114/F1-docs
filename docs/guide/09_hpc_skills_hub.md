@@ -48,21 +48,26 @@
 │
 ├── slurm-job-advisor/                         # 技能 1: 排程規劃、錢包查詢與規格防呆
 │   ├── SKILL.md                               # 核心規範、4 步問答模板與硬體矩陣
+│   ├── README.md                              # 說明文件與快速指令
 │   ├── scripts/
 │   │   ├── check_slurm_env.sh                 # 查詢 wallet 額度與可用節點
 │   │   └── validate_slurm.sh                  # 靜態檢測 + sbatch --test-only 預檢
 │   └── templates/                             # CPU、Fat Node、陣列作業範本
 │
 ├── compute-node-proxy/                        # 技能 2: 計算節點實體隔離外網穿透
-│   ├── SKILL.md                               # 4 步引導問答、真實內網 IP 與安全憑證防呆
-│   ├── scripts/
+│   ├── SKILL.md                               # 4 步引導問答、真實內網 IP、憑證防護與精確 no_proxy
+│   ├── README.md                              # 說明文件與快速指令
+│   ├── scripts/                               # 完整自包含工具腳本庫 (免依賴外部目錄)
 │   │   ├── check_proxy.sh                     # 診斷登入節點 Proxy 狀態與內網 IP
-│   │   └── test_compute_connection.sh         # 計算節點外網連線測試 (含 5 秒逾時保護)
+│   │   ├── test_compute_connection.sh         # 計算節點外網連線測試 (含 5 秒逾時保護)
+│   │   ├── start.sh / stop.sh                 # 登入節點一鍵啟動/關閉 Proxy 服務
+│   │   └── set_compute_env.sh                 # 計算節點一鍵載入環境變數 (含精確 no_proxy)
 │   └── templates/
 │       └── job_with_proxy.slurm               # 具備連線預檢的 Slurm 排程範本
 │
 ├── ai-agent-slurm-pipeline/                   # 技能 3: 互動管線自動轉為批次排程
 │   ├── SKILL.md                               # 離線 (Case A) vs Proxy (Case B) 決策樹
+│   ├── README.md                              # 說明文件
 │   ├── prompts/                               # 專屬提示詞範本
 │   └── templates/                             # 離線與 Proxy 雙模式 Slurm 管線範本
 │
