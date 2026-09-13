@@ -54,6 +54,11 @@ features:
     details: 【全系列集大成】在 Code-Server 中引導 AI Agent 自動將分析管線重構為 Slurm 批次作業，涵蓋純離線與 Proxy 動態下載雙模式！
     link: /guide/08_ai_agent_slurm_pipeline
     linkText: 實現全流程自主調度
+  - icon: 🧰
+    title: 第 09 章｜HPC AI Agent 技能總匯庫
+    details: 沉澱超算領域知識為專家技能 (slurm-job-advisor, ai-agent-slurm-pipeline, web-service-reverse-proxy)，內建問答與 test-only 預檢。
+    link: /guide/09_hpc_skills_hub
+    linkText: 探索 AI 專家技能庫
   - icon: 📜
     title: 附錄｜HPC 專屬 AGENTS.md 守則
     details: 專為超級電腦量身定制的 AI Agent 治理規範：嚴禁 sudo、耗時任務強制改寫 Slurm、大資料強制放置 /work1 高速儲存區。
