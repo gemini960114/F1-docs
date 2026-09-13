@@ -1,4 +1,4 @@
-# 國網創進一號 (F1) HPC 教學手冊
+# HPC 實戰教學系列手冊 (HPC Tutorial Series)
 ### —— 以 Code-Server Web UI 為核心工作台的超級電腦全流程實戰指南
 
 歡迎來到高效能運算（High Performance Computing, HPC）實戰教學系列手冊！本教學專為在國家高速網路與計算中心（NCHC）創進一號（Taiwania 1 / f1）等超級電腦與叢集環境中的使用者、研究人員與開發者設計。
@@ -24,6 +24,8 @@
 | **06** | **Slurm 語法精講、seff 效能分析與容器實務** | 在 Code-Server 編輯器編寫 `.slurm`，以內建終端充當 **Slurm 指揮調度中心** 派送 `ct112`/`cf112`、`seff` 效能分析與 Singularity 容器。 | **工作台指揮所**<br>語法高亮編寫排程、內建終端派送與監控 | [前往章節](./06-slurm-syntax-and-job-management/) |
 | **07** | **突破網路隔離：計算節點安全聯網代理 (HTTP Proxy)** | 於 Code-Server 終端分頁常駐 Login Node 代理服務，解決計算節點無外網無法下載模型或資料的痛點，以 InfiniBand IP 穿透防火牆。 | **工作台通訊塔**<br>背景常駐代理隧道，賦予計算任務連網能力 | [前往章節](./07-compute-node-proxy/) |
 | **08** | **AI Agent 自動化排程 (將生醫管線派送至 Slurm)** | 【全系列集大成】在 Code-Server 中引導 AI Agent 自動將分析管線重構為 Slurm 批次作業，於整合終端派送並在編輯器即時檢視日誌串流！ | **工作台集大成**<br>全自動化 AI 排程派送、監控與成果交付 | [前往章節](./08-ai-agent-slurm-pipeline/) |
+| **09** | **HPC AI Agent 技能總匯庫 (Skills Hub)** | 將超級電腦的領域知識打包為 AI Agent 專家技能 (`slurm-job-advisor`, `ai-agent-slurm-pipeline`, `web-service-reverse-proxy`)，內建問答與預檢。 | **工作台專家庫**<br>沉澱超算領域技能，賦予 AI 助手即戰力 | [前往章節](./09-skills-hub/) |
+| **附錄** | **HPC 專屬 AI Agent 治理守則 (AGENTS.md)** | 全工作區通用系統守則，規範嚴禁 sudo、/work1 儲存分層、module purge 與日誌萬用命名。 | **工作台憲法**<br>防止 AI 產生危險指令與超算違規行為 | [查看守則](./AGENTS.md) |
 
 ---
 
@@ -55,10 +57,12 @@ flowchart TD
 
     subgraph S4["第四階段：終極整合與全流程自動化 (Full Autonomous Pipeline)"]
         C8["第 08 課：Code-Server 內的 AI Agent 全自動排程<br>• AI Agent 遵守 AGENTS.md 重構生醫管線為 Slurm<br>• 整合終端派送作業, 編輯器即時檢視日誌成果"]
+        C9["第 09 課：HPC AI Agent 技能庫 (Skills Hub)<br>• slurm-job-advisor, ai-agent-slurm-pipeline<br>• web-service-reverse-proxy, 一鍵同步啟用"]
         C4 -.->|AI Agent 提示詞改寫| C8
         C5 -->|原始生醫管線| C8
         C6 -->|Slurm 調度法規| C8
         C7 -->|Proxy 穿透連網| C8
+        C8 -->|沉澱領域智慧| C9
     end
 
     classDef primary fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
@@ -67,7 +71,7 @@ flowchart TD
 
     class C1,C2,C3,C4 primary;
     class C5,C6,C7 highlight;
-    class C8 capstone;
+    class C8,C9 capstone;
 ```
 
 ---
