@@ -7,18 +7,18 @@
 ---
 
 ## 📌 目錄 (Table of Contents)
-- [1. 為什麼需要 Slurm？排程器運作本質](#1-為什麼需要-slurm排程器運作本質)
-- [2. 創進一號 (Taiwania 1 / f1) 官方規格與佇列分區表](#2-創進一號-taiwania-1--f1-官方規格與佇列分區表)
-- [3. Slurm 核心參數速查表 (#SBATCH Directives)](#3-slurm-核心參數速查表-sbatch-directives)
-- [4. 資源配置黃金三角：Nodes、Tasks 與 CPUs](#4-資源配置黃金三角nodestasks-與-cpus)
-- [5. 進階排程神器：陣列作業與流水線相依性](#5-進階排程神器陣列作業與流水線相依性)
+- [1. 為什麼需要 Slurm？排程器運作本質](#_1-為什麼需要-slurm-排程器運作本質)
+- [2. 創進一號 (Taiwania 1 / f1) 官方規格與佇列分區表](#_2-創進一號-taiwania-1-f1-官方規格與佇列分區表)
+- [3. Slurm 核心參數速查表 (#SBATCH Directives)](#_3-slurm-核心參數速查表-sbatch-directives)
+- [4. 資源配置黃金三角：Nodes、Tasks 與 CPUs](#_4-資源配置黃金三角-nodes、tasks-與-cpus)
+- [5. 進階排程神器：陣列作業與流水線相依性](#_5-進階排程神器-陣列作業與流水線相依性)
   - [A. 陣列作業 (Array Jobs)](#a-陣列作業-array-jobs)
   - [B. 相依性作業 (Job Dependencies)](#b-相依性作業-job-dependencies)
   - [C. GPU 資源申請](#c-gpu-資源申請)
-- [6. 作業監控、效能分析 (seff) 與資源除錯](#6-作業監控效能分析-seff-與資源除錯)
-- [7. 範本與實用工具說明](#7-範本與實用工具說明)
-- [8. HPC 容器化技術：Singularity / Apptainer 實務](#8-hpc-容器化技術singularity--apptainer-實務)
-- [9. 國網中心常見踩坑與排錯清單 (Troubleshooting)](#9-國網中心常見踩坑與排錯清單-troubleshooting)
+- [6. 作業監控、效能分析 (seff) 與資源除錯](#_6-作業監控、效能分析-seff-與資源除錯)
+- [7. 範本與實用工具說明](#_7-範本與實用工具說明)
+- [8. HPC 容器化技術：Singularity / Apptainer 實務](#_8-hpc-容器化技術-singularity-apptainer-實務)
+- [9. 國網中心常見踩坑與排錯清單 (Troubleshooting)](#_9-國網中心常見踩坑與排錯清單-troubleshooting)
 
 ---
 
@@ -49,33 +49,79 @@
 > [!NOTE]
 > 參考官方技術文件：[創進一號 Slurm 操作手冊](https://man.twcc.ai/@f1-manual/slurm_instructions) 與 [佇列分區表](https://man.twcc.ai/@f1-manual/partition)。
 
-### A. 計畫錢包餘額查詢 (`wallet`)
-在送出任何 Slurm 工作前，請務必先確認您的計畫代號（`PROJECT_ID`）有正數的 SU 點數：
+### A. 計畫錢包餘額查詢 (`wallet`) 與帳號綁定 (`-A` / `--account`)
+在國網中心（Taiwania 1 / f1）送出任何 Slurm 批次或互動式作業前，**必須指定一個具備足夠點數的計畫代號（PROJECT_ID）**。
+
+#### 1. 執行 `wallet` 指令查詢可用計畫與剩餘點數
+系統於 `/etc/profile.d/wallet_func.sh` 提供了 `wallet` 查詢函式：
 ```bash
-[user@ilgn01]$ wallet
-PROJECT_ID: GOV114022, PROJECT_NAME: 國網計畫, SU_BALANCE: 2024
+[user@ilgn01 ~]$ wallet
+INFO: If you belong to many projects, it may take up to 5 seconds or more.
+INFO: Specifying a project should be faster. `wallet $PROJECT_ID`
+PROJECT_ID: GOV108018, PROJECT_NAME: 大數據平台服務組測試計畫, SU_BALANCE: 5061187.4165
+PROJECT_ID: GOV114022, PROJECT_NAME: 可信賴雲TrustedCloud場域測試計畫, SU_BALANCE: 1682182.9089
+PROJECT_ID: GOV109220, PROJECT_NAME: 動物試驗資料庫維護暨基因體分析建置, SU_BALANCE: 424296.1524
+PROJECT_ID: GOV115071, PROJECT_NAME: 2026國研院暑期實習生專案計畫, SU_BALANCE: 396939.9041
+PROJECT_ID: GOV115088, PROJECT_NAME: 國網生技醫藥高效能運算推廣與應用計畫, SU_BALANCE: 100990
+PROJECT_ID: MST113173, PROJECT_NAME: 微生物相研究專案推動辦公室計畫(共同主持), SU_BALANCE: 2387.1999
 ```
 
-### B. 官方常用佇列（Partitions）資源與記憶體配比
-創進一號每個計算節點最多具備 **112 顆 CPU 核心**，不同佇列具備不同的記憶體配額：
+> [!IMPORTANT]
+> **關鍵綁定規則：**
+> 1. **`SU_BALANCE` 必須為正數**：若該計畫點數為 `0` 或負數，Slurm 排程器將立即拒絕排程。
+> 2. **在腳本中設定 `--account`**：將查得之 `PROJECT_ID` 填入 Slurm 腳本開頭：
+>    ```bash
+>    #SBATCH -A GOV114022
+>    # 或
+>    #SBATCH --account=GOV114022
+>    ```
+> 3. **常見錯誤**：若未指定計畫，或填入未授權/不存在的代號，送出作業時會報錯：
+>    `sbatch: error: Batch job submission failed: Invalid account or account/partition combination specified`。
 
-| 佇列名稱 | 適用核心數範圍 | 記憶體配置標準 | 最長執行時間 | 適用場景與限制 |
+---
+
+### B. 創進一號全分區清單與節點提交限制 (依據 `sinfo` 實機檢測)
+創進一號每個計算節點最多配備 **112 顆 CPU 核心**，不同分區在硬體規格、記憶體配比與**提交節點權限 (AllocNodes)** 上有嚴格劃分：
+
+#### 1. 登入節點 (`ilgn01/02`) 直接可派送之 CPU / 大記憶體佇列
+
+| 佇列名稱 (Partition) | 節點規模與代號 | 記憶體配置標準 | 最長執行時間 | 適用場景與限制說明 |
 | :--- | :--- | :--- | :--- | :--- |
-| **`development`** | 1 ~ 1120 核心 | 4.3 GB / 核心 | **8 小時** | **快速除錯、程式測試專用** (每位用戶限 1 個 running) |
-| **`ct112`** (標準) | 1 ~ 112 核心 | **4.3 GB / 核心** (4308 MB) | **96 小時** (4天) | **標準 CPU 單節點批次運算 (最常用)** |
-| **`ct448` ~ `ct8k`**| 113 ~ 8960 核心 | 4.3 GB / 核心 | 48 ~ 96 小時 | 跨多節點大規模 MPI 平行運算 |
-| **`cf112`** (大記憶體)| 1 ~ 112 核心 | **8.9 GB / 核心** (8916 MB) | **96 小時** (4天) | **高記憶體需求任務 (Fat Node)**，如基因組組裝 |
-| **`visual-dev`** | 1 ~ 112 核心 | 搭配 GPU 加速 | **8 小時** | **GPU 加速測試** (限從繪圖節點派送) |
-| **`vscode` / `jupyter`**| 1 ~ 112 核心 | 依設定 | **8 小時** | 限制從 Open OnDemand (OOD) Web 介面派送 |
-| **`arm-dev`** | 1 ~ 1440 核心 | **1.5 GB / 核心** | **8 小時** | **ARM 開發測試專用** (每位用戶限 1 個 running，自 `nlgn01/02` 派送) |
-| **`arm144`** | 1 ~ 144 核心 | **1.5 GB / 核心** | **48 小時** (2天) | **ARM 標準單節點批次運算** (需自 `nlgn01/02` 登入節點派送) |
+| **`development`** | 28 節點 (`icpnp321-348`) | **4.3 GB / 核心** (4308 MB) | **8 小時** | **快速除錯測試**，優先權最高 (`PriorityJobFactor=1000`)，每用戶限 1 個 running 作業 |
+| **`ct112`** (標準薄節點) | 336 節點 (`icpnq101-656`) | **4.3 GB / 核心** (4308 MB) | **96 小時** (4天) | **標準 CPU 單節點/小規模批次運算 (最常用)**，支援 1~112 核心 |
+| **`ct448` ~ `ct8k`** | 336~390 節點 (`icpnq`) | 4.3 GB / 核心 | 48 ~ 96 小時 | 跨多節點大規模 MPI 平行運算 (依核心數規模選擇) |
+| **`cf112`** (大記憶體 Fat Node) | 116 節點 (`icpnp101-310`) | **8.9 GB / 核心** (8916 MB) | **96 小時** (4天) | **高記憶體需求任務** (每節點約 1 TB RAM)，如大型基因體組裝、單細胞比對 |
+| **`cf448` ~ `cf4k`** | 116 節點 (`icpnp`) | 8.9 GB / 核心 | 48 ~ 96 小時 | 跨多節點大記憶體 MPI 平行運算 |
+| **`hm112` / `hm448`** (巨型記憶體) | 10 節點 (`icpnp311-320`) | **18.1 GB / 核心** (18130 MB)| **96 小時** (4天) | **超大記憶體任務** (每節點高達 2 TB RAM) |
 
-> [!NOTE]
-> 本教學以主流 **x86 架構**（`ct112`/`cf112`）為主軸；若您的研究軟體需在 ARM 上執行，創進一號亦提供專屬 ARM 節點與佇列（如上表），操作語法完全一致，僅需切換 partition 名稱並改由 ARM 登入節點（`nlgn01` 或 `nlgn02`）提交作業。
+#### 2. 受提交節點限制的分區 (⚠️ 從登入節點直接送出會報錯拒絕！)
+
+| 佇列名稱 | 限制派送來源節點 (`AllocNodes`) | 錯誤症狀與正確使用方式 |
+| :--- | :--- | :--- |
+| **`vscode` / `jupyter` / `rstudio` / `desktop`** | `stn[01-02]` (OOD 專屬門戶節點) | 若在 `ilgn01` 輸入 `sbatch -p vscode` 會出現 **`allocation failure: Access/permission denied`**。此佇列為 Open OnDemand 網頁門戶內部專用，請由 OOD 介面一鍵啟動。 |
+| **`visual-dev` / `visual`** (GPU 加速佇列) | `intgpn[01-04]` (繪圖專用登入節點) | 搭載 GPU 加速卡。需先登入繪圖前門節點 (`intgpn01~04`) 方可提交。 |
+| **`arm-dev` / `arm144` ~ `arm1440`** (ARM 佇列) | `nlgn[01-04]` (ARM 專用登入節點) | 採用 ARM Fujitsu 處理器 (144 核/節點)。需由 ARM 登入節點 (`nlgn01~04`) 派送。 |
 
 > [!TIP]
 > **記憶體計算秘訣**：
-> 在 `ct112` 佇列中，若申請 4 核心（`--cpus-per-task=4`），系統自動配給約 `4 × 4.3GB = 17.2GB` 記憶體！若程式需要更多記憶體，請調大申請的核心數，或改用 `cf112`（每核心 8.9GB）！
+> 在國網中心 Slurm 環境中，記憶體預設是根據申請的核心數按比例自動配發：
+> * `ct112` 佇列：申請 4 核心（`--cpus-per-task=4`）自動配給約 `4 × 4.3GB = 17.2GB` 記憶體。
+> * `cf112` 佇列：申請 4 核心自動配給約 `4 × 8.9GB = 35.6GB` 記憶體。
+> * 若程式因 OOM 記憶體不足失敗，**請加大 `--cpus-per-task` 核心數**，或將 partition 改為 `cf112`！
+
+---
+
+### C. 語法除錯利器：正式派送前的預檢指令 (`--test-only`)
+在正式提交作業消耗點數前，強烈建議使用 `--test-only` 測試您的腳本是否符合排程規則：
+```bash
+# 測試排程器是否接受該腳本（不消耗 SU、不真正排入佇列）
+sbatch --test-only my_job.slurm
+```
+若語法與計畫皆正確，系統會立即回報預計開始執行的時間與分配節點：
+```text
+sbatch: Job 1073883 to start at 2026-09-13T19:03:13 using 4 processors on nodes icpnq101 in partition ct112
+```
+若有參數錯誤（如填錯 partition、帳號過期、超過佇列時限），則會立刻拋出明確錯誤提示，省去排隊除錯的時間！
 
 ---
 

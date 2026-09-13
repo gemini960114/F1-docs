@@ -15,15 +15,15 @@
 ---
 
 ## 📌 目錄 (Table of Contents)
-- [1. 叢集前門：四大前端伺服器架構與連線清單](#1-叢集前門四大前端伺服器架構與連線清單)
-- [2. 前置準備：帳號申請與 IDExpert 2FA 綁定](#2-前置準備帳號申請與-idexpert-2fa-綁定)
-- [3. SSH 登入實戰與三種雙因子驗證方式](#3-ssh-登入實戰與三種雙因子驗證方式)
-- [4. 極速登入技巧：設定本地端 SSH Config](#4-極速登入技巧設定本地端-ssh-config)
-- [5. 大檔案傳輸必備：資料傳輸節點 (DTN) 實作](#5-大檔案傳輸必備資料傳輸節點-dtn-實作)
-- [6. 登入後第一步：環境健檢與三大儲存空間架構 (/home vs /work1)](#6-登入後第一步環境健檢與三大儲存空間架構-home-vs-work1)
-- [7. HPC 軟體環境管理：Environment Modules (ml/module)](#7-hpc-軟體環境管理environment-modules-mlmodule)
-- [8. 現代極速 Python 套件管理：uv 實務 (解決 Conda Inode 爆量痛點)](#8-現代極速-python-套件管理uv-實務-解決-conda-inode-爆量痛點)
-- [9. 連線常見踩坑與排錯 (FAQ)](#9-連線常見踩坑與排錯-faq)
+- [1. 叢集前門：四大前端伺服器架構與連線清單](#_1-叢集前門-四大前端伺服器架構與連線清單)
+- [2. 前置準備：帳號申請與 IDExpert 2FA 綁定](#_2-前置準備-帳號申請與-idexpert-2fa-綁定)
+- [3. SSH 登入實戰與三種雙因子驗證方式](#_3-ssh-登入實戰與三種雙因子驗證方式)
+- [4. 極速登入技巧：設定本地端 SSH Config](#_4-極速登入技巧-設定本地端-ssh-config)
+- [5. 大檔案傳輸必備：資料傳輸節點 (DTN) 實作](#_5-大檔案傳輸必備-資料傳輸節點-dtn-實作)
+- [6. 登入後第一步：環境健檢與三大儲存空間架構 (/home vs /work1)](#_6-登入後第一步-環境健檢與三大儲存空間架構-home-vs-work1)
+- [7. HPC 軟體環境管理：Environment Modules (ml/module)](#_7-hpc-軟體環境管理-environment-modules-ml-module)
+- [8. 現代極速 Python 套件管理：uv 實務 (解決 Conda Inode 爆量痛點)](#_8-現代極速-python-套件管理-uv-實務-解決-conda-inode-爆量痛點)
+- [9. 連線常見踩坑與排錯 (FAQ)](#_9-連線常見踩坑與排錯-faq)
 
 ---
 

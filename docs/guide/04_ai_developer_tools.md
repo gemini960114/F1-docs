@@ -5,15 +5,15 @@
 ---
 
 ## 📌 目錄 (Table of Contents)
-- [1. VS Code / Code-Server 核心與 AI 擴充套件安裝](#1-vs-code--code-server-核心與-ai-擴充套件安裝)
-- [2. AI 命令行工具安裝：Antigravity CLI (agy) 與 OpenCode](#2-ai-命令行工具安裝antigravity-cli-agy-與-opencode)
-- [3. OpenCode 國網中心設定檔診斷與修復報告](#3-opencode-國網中心設定檔診斷與修復報告)
-- [4. 正確標準版 opencode.json 配置方案](#4-正確標準版-opencodejson-配置方案)
-- [5. 國網中心支援模型清單與場景推薦](#5-國網中心支援模型清單與場景推薦)
-- [6. 實機測試與模型呼叫指令](#6-實機測試與模型呼叫指令)
-- [7. AI Agent 專屬 HPC 治理規則：AGENTS.md 實務](#7-ai-agent-專屬-hpc-治理規則agentsmd-實務)
-- [8. 延伸整合：國網官方 Ollama 本地大模型部署方案](#8-延伸整合國網官方-ollama-本地大模型部署方案)
-- [9. 網路避坑提醒：no_proxy 排除國網內網端點 (進階選修)](#9-網路避坑提醒no_proxy-排除國網內網端點-進階選修)
+- [1. VS Code / Code-Server 核心與 AI 擴充套件安裝](#_1-vs-code-code-server-核心與-ai-擴充套件安裝)
+- [2. AI 命令行工具安裝：Antigravity CLI (agy) 與 OpenCode](#_2-ai-命令行工具安裝-antigravity-cli-agy-與-opencode)
+- [3. OpenCode 國網中心設定檔診斷與修復報告](#_3-opencode-國網中心設定檔診斷與修復報告)
+- [4. 正確標準版 opencode.json 配置方案](#_4-正確標準版-opencode-json-配置方案)
+- [5. 國網中心支援模型清單與場景推薦](#_5-國網中心支援模型清單與場景推薦)
+- [6. 實機測試與模型呼叫指令](#_6-實機測試與模型呼叫指令)
+- [7. AI Agent 專屬 HPC 治理規則：AGENTS.md 實務](#_7-ai-agent-專屬-hpc-治理規則-agents-md-實務)
+- [8. 延伸整合：國網官方 Ollama 本地大模型部署方案](#_8-延伸整合-國網官方-ollama-本地大模型部署方案)
+- [9. 網路避坑提醒：no_proxy 排除國網內網端點 (進階選修)](#_9-網路避坑提醒-no-proxy-排除國網內網端點-進階選修)
 
 ---
 

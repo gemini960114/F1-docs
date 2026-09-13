@@ -10,13 +10,13 @@
 ---
 
 ## 📌 目錄 (Table of Contents)
-- [1. 核心問題：為什麼在 HPC 開網頁這麼容易踩坑？](#1-核心問題為什麼在-hpc-開網頁這麼容易踩坑)
-- [2. 動態連接埠分配與三種 Port Forwarding 途徑](#2-動態連接埠分配與三種-port-forwarding-途徑)
-- [3. 背景行程管理：為什麼絕對不能隨意用 nohup ＆？](#3-背景行程管理為什麼絕對不能隨意用-nohup-)
-- [4. 前端框架設定指南 (Node.js / Vite / React / Next.js)](#4-前端框架設定指南-nodejs--vite--react--nextjs)
-- [5. Python 網頁框架設定指南 (Streamlit / Gradio / FastAPI / Flask)](#5-python-網頁框架設定指南-streamlit--gradio--fastapi--flask)
-- [6. 萬用背景啟動腳本 (`universal_start.sh`)](#6-萬用背景啟動腳本-universal_startsh)
-- [7. 網址拼裝規則與驗證清單](#7-網址拼裝規則與驗證清單)
+- [1. 核心問題：為什麼在 HPC 開網頁這麼容易踩坑？](#_1-核心問題-為什麼在-hpc-開網頁這麼容易踩坑)
+- [2. 動態連接埠分配與三種 Port Forwarding 途徑](#_2-動態連接埠分配與三種-port-forwarding-途徑)
+- [3. 背景行程管理：為什麼絕對不能隨意用 nohup ＆？](#_3-背景行程管理-為什麼絕對不能隨意用-nohup)
+- [4. 前端框架設定指南 (Node.js / Vite / React / Next.js)](#_4-前端框架設定指南-node-js-vite-react-next-js)
+- [5. Python 網頁框架設定指南 (Streamlit / Gradio / FastAPI / Flask)](#_5-python-網頁框架設定指南-streamlit-gradio-fastapi-flask)
+- [6. 萬用背景啟動腳本 (`universal_start.sh`)](#_6-萬用背景啟動腳本-universal-start-sh)
+- [7. 網址拼裝規則與驗證清單](#_7-網址拼裝規則與驗證清單)
 
 ---
 
