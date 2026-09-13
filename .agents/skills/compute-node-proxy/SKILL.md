@@ -2,7 +2,7 @@
 name: compute-node-proxy
 description: >-
   Comprehensive guide, interactive decision engine, and automated diagnostic tool for establishing
-  secure HTTP/HTTPS proxy tunnels between isolated HPC compute nodes (NCHC Taiwania 1 / f1) and the
+  secure HTTP/HTTPS proxy tunnels between isolated HPC compute nodes (NCHC Forerunner 1 / f1) and the
   outside Internet via the login node. Detects network-dependent user tasks (pip, huggingface, wandb,
   git, API calls), conducts an interactive interview to differentiate offline pre-caching vs live
   proxying, audits login node proxy daemon status, prevents plaintext password leakage in `ps aux`,
@@ -11,7 +11,7 @@ description: >-
 
 # Compute Node Proxy & Network Tunnel Advisor (國網創進一號專用)
 
-本技能（Skill）專門指導 AI Assistant 在超級電腦（HPC，特別是國網中心創進一號 Taiwania 1 / f1）環境中，處理**計算節點（Compute Node）實體網路隔離**與對外連網需求。
+本技能（Skill）專門指導 AI Assistant 在超級電腦（HPC，特別是國網中心創進一號 Forerunner 1 / F1）環境中，處理**計算節點（Compute Node）實體網路隔離**與對外連網需求。
 
 ---
 

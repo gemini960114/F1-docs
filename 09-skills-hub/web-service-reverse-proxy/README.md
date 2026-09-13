@@ -1,6 +1,6 @@
 # 網路服務反向代理、Port Forwarding 與背景啟動指南 (Web Service & Reverse Proxy Skill)
 
-本 Skill 專門為 **HPC 高效能運算叢集（如國網中心 NCHC Taiwania / Open OnDemand）** 以及各類遠端伺服器環境設計，提供在「子路徑反向代理（Subpath Reverse Proxy）」下安全、穩定啟動各類網頁服務（Node.js / Python）與 AI Agent 的最佳實踐。
+本 Skill 專門為 **HPC 高效能運算叢集（如國網中心創進一號 Forerunner 1 / 台灣杉 Taiwania / Open OnDemand）** 以及各類遠端伺服器環境設計，提供在「子路徑反向代理（Subpath Reverse Proxy）」下安全、穩定啟動各類網頁服務（Node.js / Python）與 AI Agent 的最佳實踐。
 
 ---
 

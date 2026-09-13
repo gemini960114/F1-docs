@@ -1,6 +1,6 @@
 # HPC 實戰指南：在超級電腦上運行 Code-Server (VS Code Web)
 
-本教學手冊專為需要在國網中心（NCHC Taiwania / Open OnDemand）等 HPC 叢集上使用 **VS Code 瀏覽器介面 (Code-Server)** 的開發者設計。
+本教學手冊專為需要在國網中心（創進一號 Forerunner 1 / 台灣杉 Taiwania / Open OnDemand）等 HPC 叢集上使用 **VS Code 瀏覽器介面 (Code-Server)** 的開發者設計。
 
 本章節收錄並深入優化了您的兩個核心腳本：
 1. **登入節點版本 (`~/start-code-server_v1.sh`)** ➔ 升級為 **tmux 背景常駐版本**。

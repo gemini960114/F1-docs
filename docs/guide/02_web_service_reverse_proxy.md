@@ -1,6 +1,6 @@
 # HPC 實戰指南：網頁服務反向代理、Port Forwarding 與背景啟動
 
-本教學手冊專門為 **HPC 高效能運算叢集（如國網中心 NCHC Taiwania / Open OnDemand）** 以及各類遠端 Linux 伺服器環境設計，深入探討如何在「子路徑反向代理（Subpath Reverse Proxy）」下安全、穩定啟動各類網頁應用（Node.js / Python）與 AI Agent Web UI。
+本教學手冊專門為 **HPC 高效能運算叢集（如國網中心創進一號 Forerunner 1 / 台灣杉 Taiwania / Open OnDemand）** 以及各類遠端 Linux 伺服器環境設計，深入探討如何在「子路徑反向代理（Subpath Reverse Proxy）」下安全、穩定啟動各類網頁應用（Node.js / Python）與 AI Agent Web UI。
 
 > [!TIP]
 > **🎯 本章在全系列中的定位：通往 Code-Server 瀏覽器工作台的跨網橋樑**  

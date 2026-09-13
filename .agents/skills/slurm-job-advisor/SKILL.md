@@ -2,7 +2,7 @@
 name: slurm-job-advisor
 description: >-
   Comprehensive guide, interactive questionnaire system, and resource sizing engine for generating
-  production-ready Slurm batch scripts on NCHC Taiwania 1 (f1) and HPC clusters.
+  production-ready Slurm batch scripts on NCHC Forerunner 1 (f1) and HPC clusters.
   Inspects real-time `wallet` project balances and `sinfo` partition capabilities, conducts a guided
   interactive interview to elicit missing user requirements, prevents absurd resource allocations
   (such as 100 CPU cores with 1GB RAM or memory exceeding partition limits), maps scientific software
@@ -12,7 +12,7 @@ description: >-
 
 # Slurm Job Advisor & Resource Sizing Expert (國網創進一號專用)
 
-本技能（Skill）專門指導 AI Assistant 在超級電腦（HPC，特別是國網中心創進一號 Taiwania 1 / f1）環境中，引導使用者完成合理、合規、絕不踩坑的 Slurm 排程腳本規劃與生成。
+本技能（Skill）專門指導 AI Assistant 在超級電腦（HPC，特別是國網中心創進一號 Forerunner 1 / F1）環境中，引導使用者完成合理、合規、絕不踩坑的 Slurm 排程腳本規劃與生成。
 
 ---
 
@@ -69,7 +69,7 @@ AI 必須主動攔截並糾正以下「不合邏輯」或「必定失敗」的�
 當使用者未提供完整規格時，AI **嚴禁盲目胡亂猜測**，應發起精準的「四步引導式提問」：
 
 ```markdown
-您好！為了為您規劃最合適且符合國網創進一號（Taiwania 1）硬體規格的 Slurm 排程腳本，請協助提供以下 4 項資訊：
+您好！為了為您規劃最合適且符合國網創進一號（Forerunner 1 / F1）硬體規格的 Slurm 排程腳本，請協助提供以下 4 項資訊：
 
 1. 💳 【計費計畫代號 (Account)】
    系統查詢到您帳號目前可用的計畫代號如下：

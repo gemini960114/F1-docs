@@ -1,6 +1,6 @@
 # HPC 實戰指南：Slurm 語法精講與超級電腦作業調度實務
 
-本教學手冊全面解析在國網中心（NCHC Taiwania）及各大超級電腦叢集中最核心的排程系統 —— **Slurm (Simple Linux Utility for Resource Management)**。
+本教學手冊全面解析在國網中心創進一號（Forerunner 1 / F1）及各大超級電腦叢集中最核心的排程系統 —— **Slurm (Simple Linux Utility for Resource Management)**。
 
 本章節基於您家目錄下的實戰腳本（涵蓋 CPU 運算、多陣列平行任務、GPU 加速等），進行系統化的語法剖析、架構指南與除錯清單。
 
@@ -8,7 +8,7 @@
 
 ## 📌 目錄 (Table of Contents)
 - [1. 為什麼需要 Slurm？排程器運作本質](#1-為什麼需要-slurm排程器運作本質)
-- [2. 創進一號 (Taiwania 1 / f1) 官方規格與佇列分區表](#2-創進一號-taiwania-1--f1-官方規格與佇列分區表)
+- [2. 創進一號 (Forerunner 1 / F1) 官方規格與佇列分區表](#2-創進一號-forerunner-1--f1-官方規格與佇列分區表)
 - [3. Slurm 核心參數速查表 (#SBATCH Directives)](#3-slurm-核心參數速查表-sbatch-directives)
 - [4. 資源配置黃金三角：Nodes、Tasks 與 CPUs](#4-資源配置黃金三角nodestasks-與-cpus)
 - [5. 進階排程神器：陣列作業與流水線相依性](#5-進階排程神器陣列作業與流水線相依性)
@@ -44,7 +44,7 @@
 
 ---
 
-## 2. 創進一號 (Taiwania 1 / f1) 官方規格與佇列分區表
+## 2. 創進一號 (Forerunner 1 / F1) 官方規格與佇列分區表
 
 > [!NOTE]
 > 參考官方技術文件：[創進一號 Slurm 操作手冊](https://man.twcc.ai/@f1-manual/slurm_instructions) 與 [佇列分區表](https://man.twcc.ai/@f1-manual/partition)。

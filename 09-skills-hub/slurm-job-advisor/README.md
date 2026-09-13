@@ -1,6 +1,6 @@
 # Slurm Job Advisor & Resource Sizing Skill
 
-針對國網中心創進一號（Taiwania 1 / f1）超級電腦與通用 HPC Slurm 叢集量身打造的**資源規劃與排程腳本專家技能**。
+針對國網中心創進一號（Forerunner 1 / F1）超級電腦與通用 HPC Slurm 叢集量身打造的**資源規劃與排程腳本專家技能**。
 
 ---
 

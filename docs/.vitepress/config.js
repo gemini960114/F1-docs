@@ -78,7 +78,7 @@ export default defineConfig({
     ],
     footer: {
       message: '本教學手冊深度整合國網中心官方指南與實務踩坑經驗，實際配置請以各服務官方資訊為準。',
-      copyright: 'Copyright © 2026 NCHC Taiwania 1 (f1) Tutorial'
+      copyright: 'Copyright © 2026 NCHC Forerunner 1 (F1) Tutorial'
     }
   }
 })

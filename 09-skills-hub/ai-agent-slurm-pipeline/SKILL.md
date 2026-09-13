@@ -2,7 +2,7 @@
 name: ai-agent-slurm-pipeline
 description: >-
   Comprehensive guide and workflow engine for AI Agents to automatically refactor interactive
-  shell/Python scripts into production-ready Slurm batch jobs on HPC clusters (NCHC Taiwania 1 / f1).
+  shell/Python scripts into production-ready Slurm batch jobs on HPC clusters (NCHC Forerunner 1 / f1).
   Covers the architectural decision between pure offline execution vs dynamic compute-node HTTP proxy,
   automated dependency chaining (`--dependency=afterok:`), multi-step pipeline decomposition,
   strict error handling (`set -euo pipefail`), and pre-flight validation.
@@ -112,7 +112,7 @@ echo "🎉 全流程流水線派送完畢！Slurm 將自動按順序接續執行
 ```text
 你是一位熟悉超級電腦 Slurm 排程器與高效能運算的專家。
 我原本在終端機有一個互動式執行的腳本 `run_pipeline.sh`。
-現在我希望將這套流程重構為符合國網中心創進一號（Taiwania 1）規格的 Slurm 批次作業。
+現在我希望將這套流程重構為符合國網中心創進一號（Forerunner 1 / F1）規格的 Slurm 批次作業。
 
 【環境規範】
 - 請使用我的有效計費計畫代號：#SBATCH --account=GOV114022

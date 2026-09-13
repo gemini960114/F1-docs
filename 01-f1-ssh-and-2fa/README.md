@@ -1,6 +1,6 @@
 # HPC 實戰指南：創進一號 (f1) 遠端連線與雙因子認證 (SSH & 2FA)
 
-歡迎來到高效能運算（HPC）的第一課！在開始使用超級電腦強大的 GPU/CPU 算力、搭建 VS Code 開發環境或提交 Slurm 排程前，第一道關卡就是：**如何安全連線進入國家高速網路與計算中心（NCHC）創進一號（Taiwania 1 / f1）超級電腦**。
+歡迎來到高效能運算（HPC）的第一課！在開始使用超級電腦強大的 GPU/CPU 算力、搭建 VS Code 開發環境或提交 Slurm 排程前，第一道關卡就是：**如何安全連線進入國家高速網路與計算中心（NCHC）創進一號（Forerunner 1 / F1）超級電腦**。
 
 本教學專門為初次使用國網中心 HPC 的研究員、工程師與學生設計，詳細解析帳號設定、雙因子認證（2FA）與檔案傳輸技巧。
 
@@ -122,7 +122,7 @@ Password:
    ```
 2. 貼上下列設定（本教學提供完整範本：[`config/ssh_config_example`](./config/ssh_config_example)）：
    ```sshconfig
-   # 創進一號 (Taiwania 1) X86 登入節點
+    # 創進一號 (Forerunner 1 / F1) X86 登入節點
    Host f1
        HostName f1-ilgn01.nchc.org.tw
        User your_account

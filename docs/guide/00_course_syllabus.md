@@ -1,7 +1,7 @@
 # 國網創進一號 (F1) HPC 教學手冊
 ### —— 以 Code-Server Web UI 為核心工作台的超級電腦全流程實戰指南
 
-歡迎來到高效能運算（High Performance Computing, HPC）實戰教學系列手冊！本教學專為在國家高速網路與計算中心（NCHC）創進一號（Taiwania 1 / f1）等超級電腦與叢集環境中的使用者、研究人員與開發者設計。
+歡迎來到高效能運算（High Performance Computing, HPC）實戰教學系列手冊！本教學專為在國家高速網路與計算中心（NCHC）創進一號（Forerunner 1 / F1）等超級電腦與叢集環境中的使用者、研究人員與開發者設計。
 
 > [!IMPORTANT]
 > **🚀 現代化超級電腦開發核心理念：以 Code-Server Web UI 為中央工作台 (Unified Cockpit)**  
@@ -99,7 +99,7 @@ flowchart TD
 
 ---
 
-## 🔗 國網中心創進一號 (Taiwania 1 / f1) 官方技術手冊
+## 🔗 國網中心創進一號 (Forerunner 1 / F1) 官方技術手冊
 
 本教程深度整合了國網中心官方指南與實戰經驗，相關官方規範請參閱：
 * [創進一號服務概觀與總目錄 (f1-manual)](https://man.twcc.ai/@f1-manual/manual)

@@ -10,7 +10,7 @@ description: >-
 
 # Web Service & Reverse Proxy Configuration Guide (Node.js & Python)
 
-This skill provides step-by-step procedures and templates for launching web applications in HPC / remote server environments (such as NCHC Open OnDemand, Taiwania clusters, or code-server) where services must be accessed through **subpath reverse proxies** (e.g. `/rnode/<hostname>/<port>/` or `/proxy/<port>/`).
+This skill provides step-by-step procedures and templates for launching web applications in HPC / remote server environments (such as NCHC Open OnDemand, Forerunner 1 / Taiwania clusters, or code-server) where services must be accessed through **subpath reverse proxies** (e.g. `/rnode/<hostname>/<port>/` or `/proxy/<port>/`).
 
 ---
 

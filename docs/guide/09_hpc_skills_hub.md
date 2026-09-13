@@ -2,7 +2,7 @@
 
 在現代超級電腦（HPC）與雲端算力環境中，人工智慧助手（如 Google Antigravity、Claude Code、Zoo Code、OpenCode）已成為研究人員不可或缺的結對編程夥伴。
 
-然而，通用的 AI 大模型並不知道國網中心（NCHC Taiwania 1 / f1）特殊的計費錢包機制（`wallet`）、節點硬體上限（單機 112 核）、記憶體配比（`ct112` 每核 4.3GB / `cf112` 每核 8.9GB）或子路徑反向代理限制。
+然而，通用的 AI 大模型並不知道國網中心創進一號（NCHC Forerunner 1 / F1）特殊的計費錢包機制（`wallet`）、節點硬體上限（單機 112 核）、記憶體配比（`ct112` 每核 4.3GB / `cf112` 每核 8.9GB）或子路徑反向代理限制。
 
 為了賦予 AI 助手**「超級電腦專屬的領域智慧」**，我們建立了 **HPC AI Agent 技能總匯庫（Skills Hub）**。
 

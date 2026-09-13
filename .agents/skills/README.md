@@ -1,6 +1,6 @@
 # HPC AI Agent 技能總匯庫 (Skills Hub)
 
-本目錄為國網中心創進一號（Taiwania 1 / f1）與通用 HPC 叢集量身設計的 **AI Agent 專家技能庫（Skills Hub）**。
+本目錄為國網中心創進一號（Forerunner 1 / F1）與通用 HPC 叢集量身設計的 **AI Agent 專家技能庫（Skills Hub）**。
 
 透過將這些技能掛載至使用者的 Agent 環境（如 Google Antigravity、Claude Code、OpenCode、Zoo Code），AI 助手將從通用程式設計師，進化為**精通超級電腦排程、反向代理、資安規則與大數據管線的專屬專家**。
 

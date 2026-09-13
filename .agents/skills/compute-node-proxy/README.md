@@ -1,6 +1,6 @@
 # Compute Node Proxy & Security Skill
 
-針對國網中心創進一號（Taiwania 1 / f1）與通用 HPC 叢集量身打造的**計算節點連網穿透與代理安全專家技能**。
+針對國網中心創進一號（Forerunner 1 / F1）與通用 HPC 叢集量身打造的**計算節點連網穿透與代理安全專家技能**。
 
 ---
 
