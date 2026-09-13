@@ -328,11 +328,11 @@ scancel -u $(whoami) -n code-server
 > [!NOTE]
 > **💡 初學者線性閱讀指引**：
 > 本章推薦在**「登入節點」**以 `tmux` 執行 Code-Server（方案 A），**登入節點原生具備外網連線能力，無需任何 Proxy 設定即可直接下載擴充套件**！
-> 此小節之「計算節點掛載 Proxy」屬於**進階延伸架構**，若您初次學習，**此處可直接跳過**，待閱讀至第 07 章學會 Proxy 建置後再回頭查閱即可。
+> 此小節之「計算節點掛載 Proxy」屬於**進階延伸架構**，若您初次學習，**此處可先理解基本概念**，待閱讀至第 07 章學會 Proxy 完整建置後再回頭查閱即可。
 
-若使用**計算節點**的 Code-Server，預設因為沒有外網，打開 Extension 商店時會無法搜尋或下載套件。
+若使用**計算節點**的 Code-Server，預設因為沒有外網，打開 Extension 商店時會無法搜尋或下載套件，終端機也無法 `git clone` 或 `pip install`。
 
-### 自動聯動機制
+### A. 自動聯動機制 (環境變數)
 在優化後的 [`sbatch_code_cpu.slurm`](./slurm/sbatch_code_cpu.slurm) 中，已經內建了自動偵測第 07 章 Proxy 的邏輯：
 ```bash
 # 若第 07 章 Proxy 腳本存在，自動載入環境變數
@@ -341,7 +341,25 @@ if [ -f "${PROXY_ENV}" ]; then
     source "${PROXY_ENV}" 2>/dev/null || true
 fi
 ```
-只要您的 Login Node 有執行第 07 章的 Proxy，計算節點上的 VS Code 就能**自動擁有外網能力**，順暢下載 Extensions、使用 GitHub Copilot 或執行 `git pull/push`！
+
+### B. 關鍵觀念：環境變數 ≠ 代理伺服器已啟動
+> [!IMPORTANT]
+> 在計算節點作業輸出（`code-server-*.out`）中看到的：
+> ```text
+> ✅ 計算節點 Proxy 環境變數已設定完畢！
+>    http_proxy  = http://c00cjz00:...@10.200.160.1:8888
+> ```
+> **這僅代表計算節點設定好了連線指向，並不代表登入節點上的 Proxy 伺服器正在運行！**  
+> 若登入節點沒有啟動 Proxy 服務，計算節點發出的外網請求會直接遭到 `Connection refused` 拒絕。
+
+### C. 一秒在登入節點啟動 Proxy
+在登入節點（`ilgn01`）執行以下指令即可常駐啟動代理伺服器：
+```bash
+bash ~/hpc-tutorial/07-compute-node-proxy/scripts/start.sh
+```
+啟動後，計算節點上的 VS Code 就能**自動擁有外網能力**，順暢下載 Extensions、使用 GitHub Copilot、執行 `git clone` 或 `pip install`！
+
+> 👉 欲了解完整的安全 HTTP 代理架構、防 `ps aux` 密碼洩漏設計與國網內網拓撲，請參閱 **[第 07 章：計算節點對外連網與安全 HTTP Proxy 建置](../07-compute-node-proxy/README.md)**。
 
 ---
 
@@ -364,6 +382,10 @@ fi
 ### Q3: Slurm 作業狀態一直處於 `PD` (Pending)
 * **原因**：分區資源忙碌中正在排隊。
 * **查看原因**：執行 `squeue -u $(whoami)`，查看 `NODELIST(REASON)` 欄位（例如 `Resources` 或 `Priority`）。
+
+### Q4: 在計算節點 Code-Server 終端機執行 git clone、pip 或安裝套件時連線逾時（Connection refused）？
+* **原因**：日誌雖然顯示「`✅ 計算節點 Proxy 環境變數已設定完畢！`」，但登入節點（`ilgn01`）上的 Proxy 轉發服務尚未啟動，導致封包送達 `10.200.160.1:8888` 無人應答。
+* **解法**：在登入節點執行 `bash ~/hpc-tutorial/07-compute-node-proxy/scripts/start.sh`，服務啟動後計算節點即可正常連網。
 
 ---
 
