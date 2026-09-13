@@ -102,15 +102,16 @@ bash ~/hpc-tutorial/09-skills-hub/slurm-job-advisor/scripts/validate_slurm.sh my
 
 > **主要職責**：徹底解決「計算節點處於實體隔離內網，完全無外網連線能力」的超級電腦痛點。當使用者需要下載模型權重、安裝套件、串接即時監控（Weights & Biases）或呼叫外部 API 時，主動引導連網決策並配置安全代理。
 
-### A. 四步結構化引導問答 (Interactive Q&A)
+### A. 五步結構化引導問答 (Interactive Q&A)
 1. **連網型態診斷（預載離線 vs 即時連網）**：
    - 詢問使用者：「請問資料或權重能否在登入節點預先下載好（推薦），還是作業執行時必須即時動態連網？」
    - 若為靜態權重（如 20GB LLM 權重或固定資料庫），引導先在登入節點下載至 `/work` 共享目錄，計算節點純離線執行，避免幾十個節點同時下載擠爆頻寬。
 2. **登入節點 Proxy 狀態探測**：
    - AI 自動調用 `check_proxy.sh` 檢查登入節點上的 Proxy 服務（`tmux session: http-proxy` 監聽 Port 8888）是否正在運行。
    - 若未啟動，主動提供一鍵啟動指令 `bash ~/hpc-tutorial/07-compute-node-proxy/scripts/start.sh`。
-3. **安全憑證保護（防 `ps aux` 洩漏）**：
+3. **安全憑證保護與精確 `no_proxy` 配置**：
    - 杜絕在指令或腳本中暴露明文密碼，強制引導使用 `~/.proxy_auth`（權限必須為 `600`）在記憶體中動態載入。
+   - 內網直連排除設為 `10.0.0.0/8,172.16.0.0/12`（已涵蓋叢集節點與 MPI 通訊）。**切勿隨意加入 `*.nchc.org.tw` 萬用字元**，否則連線至 `www.nchc.org.tw` 官網等公開網站時會因計算節點無外網直連而逾時失敗。
 4. **外網連線防呆預檢（Fail-Fast 機制）**：
    - 在生成的 Slurm 腳本頂部加入 5 秒外網連線快速預檢，若網路未通立即報錯退出，避免排程在無網路狀態下空轉數小時浪費計畫點數（SU）：
      ```bash
@@ -119,6 +120,8 @@ bash ~/hpc-tutorial/09-skills-hub/slurm-job-advisor/scripts/validate_slurm.sh my
          exit 1
      fi
      ```
+5. **作業完成後的收尾提醒 (Teardown & Cleanup)**：
+   - 連網排程作業完成後，AI 主動詢問使用者是否關閉登入節點的 Proxy 服務，釋放 Port 8888 資源並降低憑證暴露風險（`bash stop.sh`）。
 
 ### B. 內建實用工具
 ```bash
@@ -127,6 +130,12 @@ bash ~/hpc-tutorial/09-skills-hub/compute-node-proxy/scripts/check_proxy.sh
 
 # 2. 計算節點外網連線快速測試 (預設測試 https://huggingface.co)
 bash ~/hpc-tutorial/09-skills-hub/compute-node-proxy/scripts/test_compute_connection.sh
+
+# 3. 啟動登入節點 Proxy 背景常駐 (tmux session)
+bash ~/hpc-tutorial/07-compute-node-proxy/scripts/start.sh
+
+# 4. 關閉登入節點 Proxy 背景常駐 (連網作業完成後建議主動關閉釋放資源)
+bash ~/hpc-tutorial/07-compute-node-proxy/scripts/stop.sh
 ```
 
 ---

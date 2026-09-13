@@ -24,7 +24,10 @@ else
 fi
 
 # 避免內網通訊 (如 node 間 MPI、local communication) 走 Proxy
-export no_proxy="localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,*.nchc.org.tw"
+# 註: 10.0.0.0/8 與 172.16.0.0/12 已涵蓋叢集內部所有節點與儲存通訊
+# ⚠️ 注意: 切勿隨意加入 *.nchc.org.tw 萬用字元，否則連線至 nchc.org.tw 底下的公開網站 (如 www.nchc.org.tw 官網) 會因計算節點無外網直連而超時失敗。
+# 若有特定內部主機名需求請明確指定，或由 Slurm 腳本個別覆寫。
+export no_proxy="localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12"
 export NO_PROXY="${no_proxy}"
 
 echo "✅ 計算節點 Proxy 環境變數已設定完畢！"

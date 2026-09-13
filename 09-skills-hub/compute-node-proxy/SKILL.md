@@ -88,6 +88,15 @@ description: >-
   echo "✅ 外網連線正常，開始運算..."
   ```
 
+### 步驟 5：作業完成後的 Proxy 收尾提醒 (Teardown & Cleanup)
+- **主動巡檢與關閉**：Slurm 作業執行完成（無論成功或失敗）後，AI 應主動詢問使用者：
+  > 「此次連網作業已完成，登入節點的 Proxy 服務目前仍在背景常駐運作（Port 8888）。是否需要現在關閉以釋放資源、降低暴露面？」
+- **使用者確認後執行**：
+  ```bash
+  bash ~/hpc-tutorial/07-compute-node-proxy/scripts/stop.sh
+  ```
+- 若使用者預期近期還有其他連網作業要派送，可保留常駐，但仍應告知目前 Proxy 處於運行狀態。
+
 ---
 
 ## 🚫 第三部分：不合理狀況檢測與防禦機制 (Guardrails)
@@ -97,7 +106,7 @@ description: >-
 | **1. 誤以為計算節點有網路** | 在 `.slurm` 內直接寫 `pip install` 或 `wget`，排程提交後掛住 24 小時扣光點數。 | **主動介入**：「計算節點為實體隔離內網。若需連網，必須配置登入節點 Proxy 通道，或在登入節點先建立好 conda 虛擬環境。」 |
 | **2. 使用假 IP (如 10.0.0.1)** | 網路上抄來的範例 IP 在創進一號根本不通。 | **強制校正**：「創進一號登入節點的 InfiniBand 內網 IP 為 `10.200.160.1`，已為您自動填入正確 IP。」 |
 | **3. 在腳本寫入明文密碼** | `export http_proxy="http://user:Secret123@..."` 提交至 Slurm。 | **資安告警**：其他使用者透過 `ps aux` 即可看見明文密碼。強制要求使用 `~/.proxy_auth` 檔案動態讀取。 |
-| **4. 遺漏 `no_proxy` 設定** | 未設定 `no_proxy`，導致跨節點 MPI 通訊或叢集內部儲存被誤送至 Proxy，引發通訊崩潰。 | **強制注入**：`export no_proxy="localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,*.nchc.org.tw"` |
+| **4. 遺漏或濫用 `no_proxy` 設定** | 未設 `no_proxy` 導致 MPI 崩潰；或濫用 `*.nchc.org.tw` 萬用字元導致連線公開站點（如 `www.nchc.org.tw` 官網）直連超時。 | **精確配置**：基礎內網直連設為 `export no_proxy="localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12"`（已涵蓋叢集節點通訊）。<br>⚠️ **重要提醒**：`*.nchc.org.tw` 排除僅適用於已知的叢集內部主機名（如管理介面、儲存節點）。若目標是對外公開網站（如 `www.nchc.org.tw` 官網、任何需經由網際網路存取的頁面），應改用明確主機名清單，或直接從 `no_proxy` 移除該網域，確保流量走 Proxy 而非直連（計算節點無外網直連會導致連線逾時失敗）。 |
 | **5. 忘記檢查登入節點 Proxy** | Slurm 任務已開始執行，但登入節點根本沒開 proxy，作業全面拋出連線例外。 | **腳本預檢**：在 Slurm 腳本頂部強制加入 `curl --connect-timeout 5` 預檢，斷線立即中止。 |
 
 ---
@@ -114,6 +123,6 @@ bash ~/hpc-tutorial/09-skills-hub/compute-node-proxy/scripts/test_compute_connec
 # 3. 啟動登入節點 Proxy 背景常駐 (tmux session)
 bash ~/hpc-tutorial/07-compute-node-proxy/scripts/start.sh
 
-# 4. 關閉登入節點 Proxy 背景常駐
+# 4. 關閉登入節點 Proxy 背景常駐 (建議所有連網 Slurm 作業完成後主動詢問是否執行此腳本，而非讓 Proxy 無限期常駐)
 bash ~/hpc-tutorial/07-compute-node-proxy/scripts/stop.sh
 ```

@@ -47,7 +47,7 @@ else
     fi
     export HTTP_PROXY="$http_proxy"
     export HTTPS_PROXY="$https_proxy"
-    export no_proxy="localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,*.nchc.org.tw"
+    export no_proxy="localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12"
     export NO_PROXY="$no_proxy"
 fi
 
