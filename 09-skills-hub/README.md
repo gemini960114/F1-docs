@@ -11,6 +11,7 @@
 | 技能名稱 | 核心功能 | 適用場景 |
 | :--- | :--- | :--- |
 | **[`slurm-job-advisor`](./slurm-job-advisor/)** | • 讀取 `wallet` 計畫餘額<br>• 引導式 4 步問答需求挖掘<br>• 硬體約束防呆（杜絕「100核配1G RAM」）<br>• `sbatch --test-only` 免扣點預檢 | 使用者需要規劃、配置、診斷或撰寫 Slurm 排程腳本時 |
+| **[`compute-node-proxy`](./compute-node-proxy/)** | • 計算節點實體隔離外網穿透<br>• 引導式 4 步連網型態與 Proxy 診斷<br>• 安全憑證防護（杜絕 `ps aux` 明文洩漏）<br>• `curl --connect-timeout 5` 連線防呆預檢 | 計算節點需要下載模型/套件、連線 wandb 或呼叫外部 API 時 |
 | **[`ai-agent-slurm-pipeline`](./ai-agent-slurm-pipeline/)** | • 互動式腳本自動重構為 Slurm 批次管線<br>• 純離線 (Case A) vs 動態 Proxy (Case B) 選型<br>• 多階段相依管線自動串接 (`--dependency=afterok:`) | 將 Code-Server/終端機執行的生醫或資料分析流程派送至計算節點時 |
 | **[`web-service-reverse-proxy`](./web-service-reverse-proxy/)** | • Open OnDemand (`/rnode/<host>/<port>/`) 反向代理<br>• 動態連接埠分配（避免 `EADDRINUSE`）<br>• VS Code / Jupyter / Streamlit / Vite 背景常駐守護 | 在超級電腦上啟動各類 Web UI、API 服務與儀表板時 |
 
@@ -23,14 +24,14 @@
 相容 [skills.sh](https://skills.sh/) 規範，支援 Google Antigravity、Claude Code、Cursor、OpenCode、Zoo Code 等各類 AI Agent：
 
 ```bash
-# 1. 檢視倉庫內所有可用技能
+# 1. 檢視倉庫內所有可用技能 (共 4 大技能)
 npx -y skills add gemini960114/F1-docs -l
 
 # 2. 一鍵全域安裝所有技能 (~/.agents/skills/)
 npx -y skills add gemini960114/F1-docs -g -y
 
 # 3. 亦可指定特定技能或特定 Agent 工具
-npx -y skills add gemini960114/F1-docs --skill slurm-job-advisor -g -y
+npx -y skills add gemini960114/F1-docs --skill compute-node-proxy -g -y
 npx -y skills add gemini960114/F1-docs -a claude-code antigravity cursor -g -y
 ```
 
@@ -49,9 +50,12 @@ bash ~/hpc-tutorial/09-skills-hub/sync_skills.sh
 ## 🛠️ 內建實用工具速查
 
 ```bash
-# 1. 查詢 wallet 額度與可用佇列
+# 1. 查詢 wallet 額度與可用佇列 (slurm-job-advisor)
 bash ~/hpc-tutorial/09-skills-hub/slurm-job-advisor/scripts/check_slurm_env.sh
 
-# 2. 驗證 Slurm 腳本合規性 (免扣點測試)
+# 2. 驗證 Slurm 腳本合規性與免扣點測試 (slurm-job-advisor)
 bash ~/hpc-tutorial/09-skills-hub/slurm-job-advisor/scripts/validate_slurm.sh your_script.slurm
+
+# 3. 診斷登入節點 Proxy 狀態與內網 IP (compute-node-proxy)
+bash ~/hpc-tutorial/09-skills-hub/compute-node-proxy/scripts/check_proxy.sh
 ```

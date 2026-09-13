@@ -13,7 +13,7 @@ echo "==========================================================================
 
 mkdir -p "$TARGET_DIR"
 
-for skill in slurm-job-advisor ai-agent-slurm-pipeline web-service-reverse-proxy; do
+for skill in slurm-job-advisor ai-agent-slurm-pipeline web-service-reverse-proxy compute-node-proxy; do
     if [ -d "$SCRIPT_DIR/$skill" ]; then
         echo "📦 同步技能: $skill ..."
         cp -ru "$SCRIPT_DIR/$skill" "$TARGET_DIR/"

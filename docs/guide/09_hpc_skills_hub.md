@@ -12,10 +12,11 @@
 - [1. 什麼是 AI Agent 技能 (Skills)？為什麼 HPC 需要專屬技能？](#_1-什麼是-ai-agent-技能-skills-為什麼-hpc-需要專屬技能)
 - [2. 技能庫架構與目錄速查 (Skills Catalog)](#_2-技能庫架構與目錄速查-skills-catalog)
 - [3. 技能一：Slurm 排程規劃與規格防呆 (`slurm-job-advisor`)](#_3-技能一-slurm-排程規劃與規格防呆-slurm-job-advisor)
-- [4. 技能二：AI 自動管線重構與雙架構選型 (`ai-agent-slurm-pipeline`)](#_4-技能二-ai-自動管線重構與雙架構選型-ai-agent-slurm-pipeline)
-- [5. 技能三：網頁反向代理與常駐守護 (`web-service-reverse-proxy`)](#_5-技能三-網頁反向代理與常駐守護-web-service-reverse-proxy)
-- [6. 技能安裝與啟用指南 (`npx skills add` 與本地同步)](#_6-技能安裝與啟用指南-npx-skills-add-與本地同步)
-- [7. 實戰演練：從自然語言提問到合規派送](#_7-實戰演練-從自然語言提問到合規派送)
+- [4. 技能二：計算節點連網與 Proxy 穿透顧問 (`compute-node-proxy`)](#_4-技能二-計算節點連網與-proxy-穿透顧問-compute-node-proxy)
+- [5. 技能三：AI 自動管線重構與雙架構選型 (`ai-agent-slurm-pipeline`)](#_5-技能三-ai-自動管線重構與雙架構選型-ai-agent-slurm-pipeline)
+- [6. 技能四：網頁反向代理與常駐守護 (`web-service-reverse-proxy`)](#_6-技能四-網頁反向代理與常駐守護-web-service-reverse-proxy)
+- [7. 技能安裝與啟用指南 (`npx skills add` 與本地同步)](#_7-技能安裝與啟用指南-npx-skills-add-與本地同步)
+- [8. 實戰演練：從自然語言提問到合規派送](#_8-實戰演練-從自然語言提問到合規派送)
 
 ---
 
@@ -28,8 +29,9 @@
 若未載入 HPC 專屬技能，通用 AI 助手容易產生以下災難性幻覺：
 1. **胡亂分配資源**：例如給出「申請 100 核心 CPU 跑一個只需 1GB 記憶體的 Python 腳本」，白白浪費 99 核心與 430 GB 記憶體配額。
 2. **記憶體超出崩潰 (OOM)**：在標準薄節點（`ct112`）上申請 4 核心（僅 17.2 GB），卻執行需要 200 GB 的 SPAdes 基因組裝，導致任務被 Linux Kernel 強制終止。
-3. **遺漏計費計畫代號**：未加入 `#SBATCH --account=`，被國網中心 Slurm 攔截拒絕排程。
-4. **誤用受限佇列**：在登入節點直接提交 `sbatch -p vscode`，遭遇 `Access/permission denied` 權限錯誤。
+3. **忽視計算節點網路隔離**：在 `.slurm` 腳本中直接寫 `pip install` 或下載模型權重，由於計算節點完全無外網，導致任務卡死超時、白扣點數。
+4. **遺漏計費計畫代號**：未加入 `#SBATCH --account=`，被國網中心 Slurm 攔截拒絕排程。
+5. **誤用受限佇列**：在登入節點直接提交 `sbatch -p vscode`，遭遇 `Access/permission denied` 權限錯誤。
 
 **HPC 專屬技能庫正是為杜絕上述問題而生的「守門員與加速器」！**
 
@@ -51,12 +53,20 @@
 │   │   └── validate_slurm.sh                  # 靜態檢測 + sbatch --test-only 預檢
 │   └── templates/                             # CPU、Fat Node、陣列作業範本
 │
-├── ai-agent-slurm-pipeline/                   # 技能 2: 互動管線自動轉為批次排程
+├── compute-node-proxy/                        # 技能 2: 計算節點實體隔離外網穿透
+│   ├── SKILL.md                               # 4 步引導問答、真實內網 IP 與安全憑證防呆
+│   ├── scripts/
+│   │   ├── check_proxy.sh                     # 診斷登入節點 Proxy 狀態與內網 IP
+│   │   └── test_compute_connection.sh         # 計算節點外網連線測試 (含 5 秒逾時保護)
+│   └── templates/
+│       └── job_with_proxy.slurm               # 具備連線預檢的 Slurm 排程範本
+│
+├── ai-agent-slurm-pipeline/                   # 技能 3: 互動管線自動轉為批次排程
 │   ├── SKILL.md                               # 離線 (Case A) vs Proxy (Case B) 決策樹
 │   ├── prompts/                               # 專屬提示詞範本
 │   └── templates/                             # 離線與 Proxy 雙模式 Slurm 管線範本
 │
-└── web-service-reverse-proxy/                 # 技能 3: 網頁服務反向代理與背景常駐
+└── web-service-reverse-proxy/                 # 技能 4: 網頁服務反向代理與背景常駐
     ├── SKILL.md                               # OOD /rnode/ 網址規範、動態 Port 與 tmux 守護
     └── README.md                              # 前端與 Python 網頁框架配置指引
 ```
@@ -88,7 +98,40 @@ bash ~/hpc-tutorial/09-skills-hub/slurm-job-advisor/scripts/validate_slurm.sh my
 
 ---
 
-## 4. 技能二：AI 自動管線重構與雙架構選型 (`ai-agent-slurm-pipeline`)
+## 4. 技能二：計算節點連網與 Proxy 穿透顧問 (`compute-node-proxy`)
+
+> **主要職責**：徹底解決「計算節點處於實體隔離內網，完全無外網連線能力」的超級電腦痛點。當使用者需要下載模型權重、安裝套件、串接即時監控（Weights & Biases）或呼叫外部 API 時，主動引導連網決策並配置安全代理。
+
+### A. 四步結構化引導問答 (Interactive Q&A)
+1. **連網型態診斷（預載離線 vs 即時連網）**：
+   - 詢問使用者：「請問資料或權重能否在登入節點預先下載好（推薦），還是作業執行時必須即時動態連網？」
+   - 若為靜態權重（如 20GB LLM 權重或固定資料庫），引導先在登入節點下載至 `/work` 共享目錄，計算節點純離線執行，避免幾十個節點同時下載擠爆頻寬。
+2. **登入節點 Proxy 狀態探測**：
+   - AI 自動調用 `check_proxy.sh` 檢查登入節點上的 Proxy 服務（`tmux session: http-proxy` 監聽 Port 8888）是否正在運行。
+   - 若未啟動，主動提供一鍵啟動指令 `bash ~/hpc-tutorial/07-compute-node-proxy/scripts/start.sh`。
+3. **安全憑證保護（防 `ps aux` 洩漏）**：
+   - 杜絕在指令或腳本中暴露明文密碼，強制引導使用 `~/.proxy_auth`（權限必須為 `600`）在記憶體中動態載入。
+4. **外網連線防呆預檢（Fail-Fast 機制）**：
+   - 在生成的 Slurm 腳本頂部加入 5 秒外網連線快速預檢，若網路未通立即報錯退出，避免排程在無網路狀態下空轉數小時浪費計畫點數（SU）：
+     ```bash
+     if ! curl -s -I --connect-timeout 5 https://huggingface.co > /dev/null; then
+         echo "❌ 嚴重錯誤：計算節點無法透過 Proxy 連線外網，終止作業以避免浪費點數！"
+         exit 1
+     fi
+     ```
+
+### B. 內建實用工具
+```bash
+# 1. 診斷登入節點 Proxy 運行狀態、IP 與憑證
+bash ~/hpc-tutorial/09-skills-hub/compute-node-proxy/scripts/check_proxy.sh
+
+# 2. 計算節點外網連線快速測試 (預設測試 https://huggingface.co)
+bash ~/hpc-tutorial/09-skills-hub/compute-node-proxy/scripts/test_compute_connection.sh
+```
+
+---
+
+## 5. 技能三：AI 自動管線重構與雙架構選型 (`ai-agent-slurm-pipeline`)
 
 > **主要職責**：將使用者在 Code-Server 終端機除錯好的互動式指令，全自動改寫為健壯的 Slurm 批次腳本。
 
@@ -96,7 +139,7 @@ bash ~/hpc-tutorial/09-skills-hub/slurm-job-advisor/scripts/validate_slurm.sh my
 1. **架構 A：事前下載 / 純離線運算模式 (Pre-Staged Offline)**
    - 資料預先存於 `/work1` 高速區，計算節點純離線執行。最穩定、不依賴登入節點 Proxy。
 2. **架構 B：動態掛載 HTTP Proxy 即時下載模式 (Dynamic Proxy)**
-   - 透過第 07 章建立的 Tinyproxy 隧道，在計算節點載入 `set_compute_env.sh`，讓計算節點在運算中即時拉取外部模型或 API。
+   - 透過第 07 章建立的 Tinyproxy/proxy.py 隧道，在計算節點載入 `set_compute_env.sh`，讓計算節點在運算中即時拉取外部模型或 API。
 
 ### B. 自動化相依管線串接 (`--dependency=afterok:`)
 引導使用者將「資料前處理 ➔ 核心計算 ➔ 報告整合」透過指令串成無人值守流水線：
@@ -108,7 +151,7 @@ JOB3=$(sbatch --parsable --dependency=afterok:$JOB2 step3_report.slurm)
 
 ---
 
-## 5. 技能三：網頁反向代理與常駐守護 (`web-service-reverse-proxy`)
+## 6. 技能四：網頁反向代理與常駐守護 (`web-service-reverse-proxy`)
 
 > **主要職責**：解決在超級電腦上啟動 Web UI、API 與互動視覺化報表的所有網路與後台進程痛點。
 
@@ -119,7 +162,7 @@ JOB3=$(sbatch --parsable --dependency=afterok:$JOB2 step3_report.slurm)
 
 ---
 
-## 6. 技能安裝與啟用指南 (`npx skills add` 與本地同步)
+## 7. 技能安裝與啟用指南 (`npx skills add` 與本地同步)
 
 本技能庫完全相容目前主流的 **Open Agent Skills 生態體系（skills.sh）**，支援以跨平台指令一鍵安裝，亦支援主機本地腳本同步。
 
@@ -131,7 +174,7 @@ JOB3=$(sbatch --parsable --dependency=afterok:$JOB2 step3_report.slurm)
 ```bash
 npx -y skills add gemini960114/F1-docs -l
 ```
-*系統將自動解析出 `slurm-job-advisor`、`ai-agent-slurm-pipeline` 與 `web-service-reverse-proxy` 三大技能。*
+*系統將自動解析出 `slurm-job-advisor`、`compute-node-proxy`、`ai-agent-slurm-pipeline` 與 `web-service-reverse-proxy` 四大技能。*
 
 #### 2. 一鍵安裝全數技能（全域模式，支援所有 Agent）：
 ```bash
@@ -140,8 +183,8 @@ npx -y skills add gemini960114/F1-docs -g -y
 
 #### 3. 針對特定 Agent 或單一技能安裝：
 ```bash
-# 僅安裝 slurm-job-advisor 技能：
-npx -y skills add gemini960114/F1-docs --skill slurm-job-advisor -g -y
+# 僅安裝 compute-node-proxy 技能：
+npx -y skills add gemini960114/F1-docs --skill compute-node-proxy -g -y
 
 # 指定安裝至特定 AI 工具 (如 claude-code, antigravity, cursor)：
 npx -y skills add gemini960114/F1-docs -a claude-code antigravity cursor -g -y
@@ -161,13 +204,13 @@ bash ~/hpc-tutorial/09-skills-hub/sync_skills.sh
 
 ---
 
-## 7. 實戰演練：從自然語言提問到合規派送
+## 8. 實戰演練：從自然語言提問到合規派送
 
-### 情境範例：
+### 範例一：資源規格防呆與換算
 > **使用者提問**：  
 > *「我想要在創進一號跑一個 Python 批次資料分析，但我不知道怎麼寫 Slurm 腳本，大概需要 50GB 記憶體，幫我規劃一下。」*
 
-### AI 觸發技能後的專業回應流程：
+**AI 觸發技能後的專業回應流程**：
 1. **調用 `check_slurm_env.sh`**：取得可用的 `wallet` 計畫代號（如 `GOV114022`）。
 2. **規格換算與防呆**：
    - 使用者需要 50GB 記憶體。
@@ -176,3 +219,16 @@ bash ~/hpc-tutorial/09-skills-hub/sync_skills.sh
    - 向使用者建議：「若您的程式支援多執行緒平行，推薦 `ct112` 12 核心；若程式多為單核計算，推薦使用 `cf112` 6 核心以減少 SU 核心時浪費。」
 3. **自動產生標頭規範完整、含 `set -euo pipefail` 的 `.slurm` 腳本**。
 4. **主動調用 `validate_slurm.sh`** 進行 `sbatch --test-only` 免扣點預檢，並回傳預計啟動時間！
+
+### 範例二：計算節點連網與 Proxy 防呆
+> **使用者提問**：  
+> *「我想寫個 Slurm 腳本在計算節點跑 PyTorch 模型微調，程式中需要自動從 Hugging Face 下載權重，該怎麼寫？」*
+
+**AI 觸發技能後的專業回應流程**：
+1. **連網型態診斷與架構建議**：
+   - 詢問模型大小。若權重達數十 GB，優先建議先在登入節點執行 `huggingface-cli download` 儲存至 `/work`。
+   - 若確認需要在計算節點直接連線下載，啟動 Proxy 流程。
+2. **調用 `check_proxy.sh`** 探測登入節點 Proxy 狀態。若未啟動，指導使用者執行 `bash ~/hpc-tutorial/07-compute-node-proxy/scripts/start.sh`。
+3. **安全注入 `source set_compute_env.sh`**（走 InfiniBand 內網 `10.200.160.1:8888`，絕不暴露明文密碼）。
+4. **自動在腳本開頭加入 5 秒連線預檢**，若外網中斷則立即中止排程，確保不白扣計畫 SU 點數！
+
