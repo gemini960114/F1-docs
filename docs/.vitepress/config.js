@@ -25,7 +25,8 @@ export default defineConfig({
           { text: '第 05 章：AI 輔助生醫管線實作', link: '/guide/05_ai_assisted_bio_pipeline' },
           { text: '第 06 章：Slurm 語法與作業調度', link: '/guide/06_slurm_syntax_and_job_management' },
           { text: '第 07 章：突破網路隔離 HTTP Proxy', link: '/guide/07_compute_node_proxy' },
-          { text: '第 08 章：AI Agent 自動化排程管線', link: '/guide/08_ai_agent_slurm_pipeline' }
+          { text: '第 08 章：AI Agent 自動化排程管線', link: '/guide/08_ai_agent_slurm_pipeline' },
+          { text: '第 09 章：HPC AI Agent 技能庫 (Skills Hub)', link: '/guide/09_hpc_skills_hub' }
         ]
       },
       { text: 'AI 規範 (AGENTS.md)', link: '/guide/agents_governance' },
@@ -58,7 +59,8 @@ export default defineConfig({
       {
         text: '🎯 第四階段：終極整合與全流程自動化',
         items: [
-          { text: '🚀 第 08 章：AI Agent 自動化排程派送', link: '/guide/08_ai_agent_slurm_pipeline' }
+          { text: '🚀 第 08 章：AI Agent 自動化排程派送', link: '/guide/08_ai_agent_slurm_pipeline' },
+          { text: '🧰 第 09 章：HPC AI Agent 技能庫 (Skills Hub)', link: '/guide/09_hpc_skills_hub' }
         ]
       },
       {

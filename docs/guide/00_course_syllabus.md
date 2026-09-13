@@ -55,10 +55,12 @@ flowchart TD
 
     subgraph S4["第四階段：終極整合與全流程自動化 (Full Autonomous Pipeline)"]
         C8["第 08 課：Code-Server 內的 AI Agent 全自動排程<br>• AI Agent 遵守 AGENTS.md 重構生醫管線為 Slurm<br>• 整合終端派送作業, 編輯器即時檢視日誌成果"]
+        C9["第 09 課：HPC AI Agent 技能庫 (Skills Hub)<br>• slurm-job-advisor, ai-agent-slurm-pipeline<br>• web-service-reverse-proxy, 一鍵同步啟用"]
         C4 -.->|AI Agent 提示詞改寫| C8
         C5 -->|原始生醫管線| C8
         C6 -->|Slurm 調度法規| C8
         C7 -->|Proxy 穿透連網| C8
+        C8 -->|沉澱領域智慧| C9
     end
 
     classDef primary fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
@@ -67,7 +69,7 @@ flowchart TD
 
     class C1,C2,C3,C4 primary;
     class C5,C6,C7 highlight;
-    class C8 capstone;
+    class C8,C9 capstone;
 ```
 
 ---
