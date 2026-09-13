@@ -25,13 +25,13 @@ echo "==========================================================================
 # ------------------------------------------------------------------------------
 # 1. 掛載登入節點之 HTTP Proxy 隧道環境變數
 # ------------------------------------------------------------------------------
-PROXY_ENV="$HOME/hpc-tutorial/07-compute-node-proxy/scripts/set_compute_env.sh"
+PROXY_ENV="${PROXY_ENV:-$HOME/.agents/skills/compute-node-proxy/scripts/set_compute_env.sh}"
 if [ -f "$PROXY_ENV" ]; then
     echo "正在載入 Proxy 環境變數: $PROXY_ENV"
     # shellcheck source=/dev/null
     source "$PROXY_ENV"
 else
-    echo "⚠️ 找不到 $PROXY_ENV，若計算節點需要外網請確保第 07 章 Proxy 已啟動。"
+    echo "⚠️ 找不到 $PROXY_ENV，若計算節點需要外網請確保 compute-node-proxy 服務已啟動。"
 fi
 
 # 測試連網能力

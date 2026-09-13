@@ -24,6 +24,8 @@ description: >-
 
 ---
 
+> 💡 **可攜性與腳本路徑說明**：本 Skill 所有輔助腳本皆位於此 Skill 自身安裝目錄的 `scripts/` 資料夾內（載入本 Skill 時系統會提供實際安裝路徑），完全獨立自足，不依賴任何特定使用者個人家目錄下的額外教學檔案。AI 產生 Slurm 腳本或給予執行指令時，務必將 Proxy 相關指令路徑替換為當次實際的 Skill 安裝路徑（以下範例以 `<此 skill 的 scripts 目錄>/xxx.sh` 表示），而非沿用固定字串。
+
 ## 🏛️ 第一部分：叢集真實網路架構與鐵律 (Truth & Constraints)
 
 在給出任何排程與代碼建議前，AI **必須清楚認知超級電腦的網路拓撲**：
@@ -57,24 +59,24 @@ description: >-
 ### 步驟 2：登入節點 Proxy 狀態探測
 - **AI 執行探測**：
   ```bash
-  bash ~/hpc-tutorial/09-skills-hub/compute-node-proxy/scripts/check_proxy.sh
+  bash <此 skill 的 scripts 目錄>/check_proxy.sh
   ```
 - **狀態分支判定**：
   - **若狀態為 🟢 運行中**：確認連接埠（預設 8888）與內網 IP（`10.200.160.1`），進入步驟 3。
   - **若狀態為 🔴 尚未啟動**：
     主動告知使用者：「登入節點的 Proxy 服務尚未啟動。請先執行以下指令啟動常駐代理：
     ```bash
-    bash ~/hpc-tutorial/07-compute-node-proxy/scripts/start.sh
+    bash <此 skill 的 scripts 目錄>/start.sh
     ```
     完成後 AI 將為您配置排程腳本。」
 
 ### 步驟 3：安全憑證與環境變數規範
 - 嚴禁在使用者產生的 Slurm 腳本中暴露任何明文密碼。
-- 推薦注入方式（優先使用統一維護的環境載入腳本）：
+- 推薦注入方式（優先使用此 skill 安裝目錄下的環境載入腳本）：
   ```bash
-  # 優先採用模組化載入腳本
-  if [ -f "$HOME/hpc-tutorial/07-compute-node-proxy/scripts/set_compute_env.sh" ]; then
-      source "$HOME/hpc-tutorial/07-compute-node-proxy/scripts/set_compute_env.sh"
+  # 優先採用模組化載入腳本 (由 AI 動態填入實際安裝路徑)
+  if [ -f "<此 skill 的 scripts 目錄>/set_compute_env.sh" ]; then
+      source "<此 skill 的 scripts 目錄>/set_compute_env.sh"
   fi
   ```
 
@@ -93,7 +95,7 @@ description: >-
   > 「此次連網作業已完成，登入節點的 Proxy 服務目前仍在背景常駐運作（Port 8888）。是否需要現在關閉以釋放資源、降低暴露面？」
 - **使用者確認後執行**：
   ```bash
-  bash ~/hpc-tutorial/07-compute-node-proxy/scripts/stop.sh
+  bash <此 skill 的 scripts 目錄>/stop.sh
   ```
 - 若使用者預期近期還有其他連網作業要派送，可保留常駐，但仍應告知目前 Proxy 處於運行狀態。
 
@@ -115,14 +117,14 @@ description: >-
 
 ```bash
 # 1. 診斷登入節點 Proxy 是否在運作、IP 與認證是否正常
-bash ~/hpc-tutorial/09-skills-hub/compute-node-proxy/scripts/check_proxy.sh
+bash <此 skill 的 scripts 目錄>/check_proxy.sh
 
 # 2. 在計算節點或 srun 終端中測試 Proxy 連線 (預設測 https://huggingface.co)
-bash ~/hpc-tutorial/09-skills-hub/compute-node-proxy/scripts/test_compute_connection.sh
+bash <此 skill 的 scripts 目錄>/test_compute_connection.sh
 
 # 3. 啟動登入節點 Proxy 背景常駐 (tmux session)
-bash ~/hpc-tutorial/07-compute-node-proxy/scripts/start.sh
+bash <此 skill 的 scripts 目錄>/start.sh
 
 # 4. 關閉登入節點 Proxy 背景常駐 (建議所有連網 Slurm 作業完成後主動詢問是否執行此腳本，而非讓 Proxy 無限期常駐)
-bash ~/hpc-tutorial/07-compute-node-proxy/scripts/stop.sh
+bash <此 skill 的 scripts 目錄>/stop.sh
 ```

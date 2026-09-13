@@ -52,11 +52,12 @@ description: >-
 * **標準腳本關鍵特徵**：
   * 在執行運算前載入 `set_compute_env.sh`：
     ```bash
-    if [ -f "$HOME/hpc-tutorial/07-compute-node-proxy/scripts/set_compute_env.sh" ]; then
-        source "$HOME/hpc-tutorial/07-compute-node-proxy/scripts/set_compute_env.sh"
+    PROXY_ENV="${PROXY_ENV:-$HOME/.agents/skills/compute-node-proxy/scripts/set_compute_env.sh}"
+    if [ -f "$PROXY_ENV" ]; then
+        source "$PROXY_ENV"
     fi
     ```
-  * 必須設置 `no_proxy` 排除叢集內網主機（`localhost,127.0.0.1,*.nchc.org.tw,10.*`），避免內部通訊被誤轉送。
+  * 必須設置 `no_proxy` 排除叢集內網主機（`localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12`），避免內部通訊被誤轉送。注意切勿隨意加入 `*.nchc.org.tw` 避免公開網站直連逾時。
 
 ---
 

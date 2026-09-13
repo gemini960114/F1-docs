@@ -8,6 +8,8 @@ set -euo pipefail
 TEST_URL="${1:-https://huggingface.co}"
 TIMEOUT=5
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 echo "🧪 正在驗證計算節點外網代理連線..."
 echo "   測試目標: ${TEST_URL}"
 echo "   http_proxy  = ${http_proxy:-未設定}"
@@ -15,7 +17,7 @@ echo "   https_proxy = ${https_proxy:-未設定}"
 
 if [ -z "${http_proxy:-}" ] && [ -z "${https_proxy:-}" ]; then
     echo "❌ 錯誤: 未偵測到 http_proxy 或 https_proxy 環境變數！"
-    echo "💡 請先執行: source ~/hpc-tutorial/07-compute-node-proxy/scripts/set_compute_env.sh"
+    echo "💡 請先執行: source ${SCRIPT_DIR}/set_compute_env.sh"
     exit 1
 fi
 
@@ -30,7 +32,7 @@ if HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -I --connect-timeout "${TI
 else
     echo "❌ 連線失敗！計算節點無法透過 Proxy 連線至 ${TEST_URL} (逾時 ${TIMEOUT} 秒)。"
     echo "💡 請檢查："
-    echo "   1. 登入節點上的 Proxy 是否仍在執行 (bash ~/hpc-tutorial/09-skills-hub/compute-node-proxy/scripts/check_proxy.sh)"
+    echo "   1. 登入節點上的 Proxy 是否仍在執行 (bash ${SCRIPT_DIR}/check_proxy.sh)"
     echo "   2. 密碼檔 ~/.proxy_auth 是否一致"
     echo "   3. 內網 IP 是否為 10.200.160.1 (ib0)"
     exit 1

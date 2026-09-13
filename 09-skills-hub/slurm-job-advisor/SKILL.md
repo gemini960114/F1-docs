@@ -25,6 +25,8 @@ description: >-
 
 ---
 
+> 💡 **可攜性與腳本路徑說明**：本 Skill 所有輔助腳本皆位於此 Skill 自身安裝目錄的 `scripts/` 資料夾內（載入本 Skill 時系統會提供實際安裝路徑），完全獨立自足。AI 執行或引導執行輔助腳本時，務必以當次實際安裝路徑調用（以下範例以 `<此 skill 的 scripts 目錄>/xxx.sh` 表示），而非沿用固定字串。
+
 ## 🏛️ 第一部分：創進一號 (f1) 硬體真相與資源約束矩陣
 
 在給出任何建議前，AI **必須嚴格基於叢集真實硬體與排程架構**，杜絕幻覺與不合理配置：
@@ -123,14 +125,14 @@ AI 必須主動攔截並糾正以下「不合邏輯」或「必定失敗」的�
 
 ### 1. 查詢環境與可用額度 (`check_slurm_env.sh`)
 ```bash
-bash /home/c00cjz00/.agents/skills/slurm-job-advisor/scripts/check_slurm_env.sh
+bash <此 skill 的 scripts 目錄>/check_slurm_env.sh
 ```
 即時輸出使用者的錢包餘額、有效計畫代號、以及 `development` / `ct112` / `cf112` 的閒置節點數。
 
 ### 2. 靜態分析與免扣點模擬預檢 (`validate_slurm.sh`)
 在產生或修改任何 `.slurm` 腳本後，**必須引導使用者或主動執行驗證腳本**：
 ```bash
-bash /home/c00cjz00/.agents/skills/slurm-job-advisor/scripts/validate_slurm.sh your_job.slurm
+bash <此 skill 的 scripts 目錄>/validate_slurm.sh your_job.slurm
 ```
 該工具會自動檢查：
 - 是否缺少 Account 或填入無效 Account。

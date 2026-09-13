@@ -24,15 +24,16 @@ echo "🖥️ 執行節點: $(hostname)"
 echo "========================================================"
 
 # ------------------------------------------------------------------------------
-# 步驟 1：載入 Proxy 環境變數 (相容模式)
+# 步驟 1：載入 Proxy 環境變數 (優先讀取 Skill 內建腳本)
 # ------------------------------------------------------------------------------
-PROXY_SCRIPT="$HOME/hpc-tutorial/07-compute-node-proxy/scripts/set_compute_env.sh"
+# 提示：此路徑在 AI 產生 Slurm 腳本時，應動態替換為該次 skill 實際安裝目錄下的 scripts/set_compute_env.sh
+PROXY_SCRIPT="${PROXY_SCRIPT:-$HOME/.agents/skills/compute-node-proxy/scripts/set_compute_env.sh}"
 
 if [ -f "$PROXY_SCRIPT" ]; then
     echo "==> 正在載入 Proxy 環境變數 (${PROXY_SCRIPT})..."
     source "$PROXY_SCRIPT"
 else
-    echo "==> 未找到預設腳本，採用備援環境變數配置..."
+    echo "==> 採用備援環境變數配置 (注意：備援模式僅設定變數，登入節點仍須有人工啟動的 Proxy 服務)..."
     LOGIN_IP="10.200.160.1"
     PORT="8888"
     AUTH_FILE="$HOME/.proxy_auth"
@@ -61,7 +62,7 @@ if ! curl -s -I --connect-timeout 5 "$CHECK_URL" > /dev/null; then
     echo "❌ 嚴重錯誤：計算節點無法透過 Proxy 連線至外網！"
     echo "💡 失敗原因排查："
     echo "   1. 請確認登入節點 (ilgn01) 是否已啟動 Proxy："
-    echo "      bash ~/hpc-tutorial/07-compute-node-proxy/scripts/start.sh"
+    echo "      bash <此 skill 的 scripts 目錄>/start.sh"
     echo "   2. 請確認登入節點上的 tmux session 'http-proxy' 仍在運行。"
     echo "   3. 請確認 ~/.proxy_auth 密碼未被重設或誤刪。"
     echo "🛑 終止作業以避免浪費計畫點數。"

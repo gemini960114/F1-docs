@@ -9,6 +9,8 @@ PORT="${1:-8888}"
 SESSION_NAME="http-proxy"
 AUTH_FILE="${HOME}/.proxy_auth"
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 echo "========================================================"
 echo "🔍 國網創進一號 (f1) 計算節點 Proxy 連線診斷"
 echo "========================================================"
@@ -73,7 +75,7 @@ if [ ${IS_TMUX_RUNNING} -eq 1 ] || [ ${IS_PORT_LISTENING} -eq 1 ]; then
 
     echo "--------------------------------------------------------"
     echo "💡 在 Slurm 腳本或計算節點中使用此 Proxy："
-    echo "   source ~/hpc-tutorial/07-compute-node-proxy/scripts/set_compute_env.sh"
+    echo "   source ${SCRIPT_DIR}/set_compute_env.sh"
     echo "   或手動設定:"
     if [ -f "${AUTH_FILE}" ]; then
         echo "   export http_proxy=\"http://\$(cat ~/.proxy_auth)@${LOGIN_IP}:${PORT}\""
@@ -86,6 +88,6 @@ else
     echo "🛑 Proxy 服務狀態: 🔴 尚未啟動"
     echo "--------------------------------------------------------"
     echo "💡 若計算節點作業需要連網，請先在登入節點執行以下指令啟動 Proxy："
-    echo "   bash ~/hpc-tutorial/07-compute-node-proxy/scripts/start.sh"
+    echo "   bash ${SCRIPT_DIR}/start.sh"
 fi
 echo "========================================================"
