@@ -110,6 +110,14 @@ MultiQC 執行檔: ~/.venv-proxy/bin/multiqc
 MultiQC 報告位置: demo_data/multiqc_out/multiqc_report.html
 ```
 
+> [!TIP]
+> **工具環境相容說明**：
+> 質控腳本 `run_fastqc_multiqc.sh` 具備自動環境偵測能力，會智慧尋找並相容：
+> 1. 第 01 章建立的 Python 運算核心 (`/work1/$USER/envs/hpc-kernel`)
+> 2. 第 07 章建立的代理環境 (`~/.venv-proxy`)
+> 3. 或透過 `uv` 自動建立獨立質控環境 (`~/.venv-bio`)  
+> 無論您是初次線性閱讀或跳章實作，皆可開箱即用、無縫執行！
+
 ---
 
 ## 5. 與第 2 章反向代理聯動：在瀏覽器預覽 MultiQC 報告
@@ -145,5 +153,9 @@ bash ~/hpc-tutorial/05-ai-assisted-bio-pipeline/scripts/view_multiqc_report.sh
 * 若直接在登入節點執行大型 FastQC、BWA 比對或 QIIME 2 DADA2 去噪，會佔用高達數十個 CPU 核心與幾十 GB 記憶體，導致整台登入節點卡死，**會被系統管理員強制中止行程（`kill -9`）甚至暫停帳號權限**！
 
 因此，我們必須學習如何使用 **Slurm 作業排程器**，將整個生醫分析流程封裝並派送到擁有龐大資源的**計算節點 (Compute Node)**。
+
+> 💡 **學習脈絡導讀 (Roadmap)**：
+> * **[第 06 章：Slurm 語法精講](../06-slurm-syntax-and-job-management/)**：您將深入掌握 Slurm 的核心指令（`sbatch`/`squeue`/`scancel`）、資源黃金三角配置與效能分析。
+> * **[第 08 章：AI Agent 自動化排程實戰](../08-ai-agent-slurm-pipeline/)**：全系列集大成章節，您將看到 AI Agent 如何把本章（第 05 章）的生醫管線，無縫重構為 Slurm 批次作業並派送至計算節點大規模運算！
 
 👉 **下一課**：[第 06 章：Slurm 語法精講與超級電腦作業調度實務](../06-slurm-syntax-and-job-management/)

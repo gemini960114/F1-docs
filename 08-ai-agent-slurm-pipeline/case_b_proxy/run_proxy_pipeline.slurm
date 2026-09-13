@@ -65,6 +65,10 @@ echo "==> [步驟 4/4] 執行質控與報告生成..."
 MULTIQC_CMD="multiqc"
 if [ -x "${HOME}/.venv-proxy/bin/multiqc" ]; then
     MULTIQC_CMD="${HOME}/.venv-proxy/bin/multiqc"
+elif [ -x "/work1/${USER}/envs/hpc-kernel/bin/multiqc" ]; then
+    MULTIQC_CMD="/work1/${USER}/envs/hpc-kernel/bin/multiqc"
+elif [ -x "${HOME}/.local/bin/multiqc" ]; then
+    MULTIQC_CMD="${HOME}/.local/bin/multiqc"
 fi
 
 for f in "${DATA_DIR}"/*.fastq.gz; do

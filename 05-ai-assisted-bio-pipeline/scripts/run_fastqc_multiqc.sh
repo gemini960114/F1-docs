@@ -20,17 +20,28 @@ if [ ! -d "${RAW_DIR}" ] || [ -z "$(ls -A "${RAW_DIR}"/*.fastq.gz 2>/dev/null ||
     bash "${SCRIPT_DIR}/download_demo_fastq.sh"
 fi
 
-# 尋找 MultiQC
+# 尋找 MultiQC (支援系統路徑、第 01 章 hpc-kernel、第 07 章 venv-proxy 或自動安裝)
 MULTIQC_CMD="multiqc"
 if ! command -v multiqc &>/dev/null; then
     if [ -x "${HOME}/.venv-proxy/bin/multiqc" ]; then
         MULTIQC_CMD="${HOME}/.venv-proxy/bin/multiqc"
+    elif [ -x "/work1/${USER}/envs/hpc-kernel/bin/multiqc" ]; then
+        MULTIQC_CMD="/work1/${USER}/envs/hpc-kernel/bin/multiqc"
     elif [ -x "${HOME}/.local/bin/multiqc" ]; then
         MULTIQC_CMD="${HOME}/.local/bin/multiqc"
-    else
-        echo "正在透過 uv 安裝 multiqc..."
+    elif [ -f "/work1/${USER}/envs/hpc-kernel/bin/python" ]; then
+        echo "正在透過 uv 安裝 multiqc 至第 01 章建立的 hpc-kernel 環境..."
+        uv pip install --python "/work1/${USER}/envs/hpc-kernel/bin/python" multiqc
+        MULTIQC_CMD="/work1/${USER}/envs/hpc-kernel/bin/multiqc"
+    elif [ -f "${HOME}/.venv-proxy/bin/python" ]; then
+        echo "正在透過 uv 安裝 multiqc 至第 07 章建立的 venv-proxy 環境..."
         uv pip install --python "${HOME}/.venv-proxy/bin/python" multiqc
         MULTIQC_CMD="${HOME}/.venv-proxy/bin/multiqc"
+    else
+        echo "正在透過 uv 建立專屬環境並安裝 multiqc..."
+        uv venv "${HOME}/.venv-bio"
+        uv pip install --python "${HOME}/.venv-bio/bin/python" multiqc
+        MULTIQC_CMD="${HOME}/.venv-bio/bin/multiqc"
     fi
 fi
 echo "MultiQC 執行檔: ${MULTIQC_CMD}"

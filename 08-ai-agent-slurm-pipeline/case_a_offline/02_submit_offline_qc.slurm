@@ -37,10 +37,14 @@ if [ ! -d "${DATA_DIR}" ] || [ -z "$(ls -A "${DATA_DIR}"/*.fastq.gz 2>/dev/null 
     exit 1
 fi
 
-# 2. 尋找 MultiQC 執行檔
+# 2. 尋找 MultiQC 執行檔 (支援第 07 章 venv-proxy、第 01 章 hpc-kernel 或系統路徑)
 MULTIQC_CMD="multiqc"
 if [ -x "${HOME}/.venv-proxy/bin/multiqc" ]; then
     MULTIQC_CMD="${HOME}/.venv-proxy/bin/multiqc"
+elif [ -x "/work1/${USER}/envs/hpc-kernel/bin/multiqc" ]; then
+    MULTIQC_CMD="/work1/${USER}/envs/hpc-kernel/bin/multiqc"
+elif [ -x "${HOME}/.local/bin/multiqc" ]; then
+    MULTIQC_CMD="${HOME}/.local/bin/multiqc"
 fi
 
 # 3. 執行 FastQC (支援多核心加速)
