@@ -18,7 +18,25 @@
 
 ## 🚀 快速安裝與啟用
 
-若要在目前帳號中啟用所有技能，只需執行隨附的同步腳本：
+### 方法一：現代標準 `npx skills add` 一鍵安裝 🌟 (最推薦)
+
+相容 [skills.sh](https://skills.sh/) 規範，支援 Google Antigravity、Claude Code、Cursor、OpenCode、Zoo Code 等各類 AI Agent：
+
+```bash
+# 1. 檢視倉庫內所有可用技能
+npx -y skills add gemini960114/F1-docs -l
+
+# 2. 一鍵全域安裝所有技能 (~/.agents/skills/)
+npx -y skills add gemini960114/F1-docs -g -y
+
+# 3. 亦可指定特定技能或特定 Agent 工具
+npx -y skills add gemini960114/F1-docs --skill slurm-job-advisor -g -y
+npx -y skills add gemini960114/F1-docs -a claude-code antigravity cursor -g -y
+```
+
+### 方法二：創進一號叢集本機同步腳本
+
+若您已在創進一號登入節點上，亦可直接執行隨附的同步腳本：
 
 ```bash
 bash ~/hpc-tutorial/09-skills-hub/sync_skills.sh

@@ -14,7 +14,7 @@
 - [3. 技能一：Slurm 排程規劃與規格防呆 (`slurm-job-advisor`)](#_3-技能一-slurm-排程規劃與規格防呆-slurm-job-advisor)
 - [4. 技能二：AI 自動管線重構與雙架構選型 (`ai-agent-slurm-pipeline`)](#_4-技能二-ai-自動管線重構與雙架構選型-ai-agent-slurm-pipeline)
 - [5. 技能三：網頁反向代理與常駐守護 (`web-service-reverse-proxy`)](#_5-技能三-網頁反向代理與常駐守護-web-service-reverse-proxy)
-- [6. 一鍵同步安裝與 Agent 啟用指南](#_6-一鍵同步安裝與-agent-啟用指南)
+- [6. 技能安裝與啟用指南 (`npx skills add` 與本地同步)](#_6-技能安裝與啟用指南-npx-skills-add-與本地同步)
 - [7. 實戰演練：從自然語言提問到合規派送](#_7-實戰演練-從自然語言提問到合規派送)
 
 ---
@@ -119,16 +119,45 @@ JOB3=$(sbatch --parsable --dependency=afterok:$JOB2 step3_report.slurm)
 
 ---
 
-## 6. 一鍵同步安裝與 Agent 啟用指南
+## 6. 技能安裝與啟用指南 (`npx skills add` 與本地同步)
 
-系統自動辨識放置於 `~/.agents/skills/` 目錄下的技能。
+本技能庫完全相容目前主流的 **Open Agent Skills 生態體系（skills.sh）**，支援以跨平台指令一鍵安裝，亦支援主機本地腳本同步。
 
-### 一鍵同步指令：
+### 方法一：使用現代標準 `npx skills add` 一鍵安裝 🌟 (跨主機/跨工具最推薦)
+
+只要環境具備 Node.js / npx（創進一號已預載），任何人皆可透過官方標準的 `skills` 工具，將本倉庫的技能直接安裝至本機或全域 Agent 設定中：
+
+#### 1. 列出倉庫內所有可用技能：
+```bash
+npx -y skills add gemini960114/F1-docs -l
+```
+*系統將自動解析出 `slurm-job-advisor`、`ai-agent-slurm-pipeline` 與 `web-service-reverse-proxy` 三大技能。*
+
+#### 2. 一鍵安裝全數技能（全域模式，支援所有 Agent）：
+```bash
+npx -y skills add gemini960114/F1-docs -g -y
+```
+
+#### 3. 針對特定 Agent 或單一技能安裝：
+```bash
+# 僅安裝 slurm-job-advisor 技能：
+npx -y skills add gemini960114/F1-docs --skill slurm-job-advisor -g -y
+
+# 指定安裝至特定 AI 工具 (如 claude-code, antigravity, cursor)：
+npx -y skills add gemini960114/F1-docs -a claude-code antigravity cursor -g -y
+```
+
+---
+
+### 方法二：創進一號叢集本地一鍵同步腳本
+
+若您已在創進一號登入節點或內部網路環境中，亦可直接使用教程隨附的同步腳本：
+
 ```bash
 bash ~/hpc-tutorial/09-skills-hub/sync_skills.sh
 ```
 
-執行後，`slurm-job-advisor`、`ai-agent-slurm-pipeline` 與 `web-service-reverse-proxy` 即刻生效。當您在 Code-Server、Antigravity CLI 或 Claude Code 中提出相關任務時，AI 將無縫啟動專屬技能！
+執行後，所有技能將自動同步至 `~/.agents/skills/`，Google Antigravity、Claude Code、OpenCode 或 Zoo Code 啟動時即會自動載入！
 
 ---
 
