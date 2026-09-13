@@ -7,7 +7,7 @@ export default defineConfig({
     ['link', { rel: 'icon', href: 'https://man.twcc.ai/favicon.ico' }],
     ['meta', { name: 'theme-color', content: '#0284c7' }]
   ],
-  base: '/f1-docs/',
+  base: '/F1-docs/',
   ignoreDeadLinks: true,
   themeConfig: {
     nav: [
