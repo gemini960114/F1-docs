@@ -21,6 +21,27 @@ echo "作業任務 ID  : ${SLURM_JOB_ID}"
 echo "分配 CPU 核心: ${SLURM_CPUS_PER_TASK}"
 echo "=========================================================="
 
+# ------------------------------------------------------------------------------
+# 隔離登入節點 VS Code / Code-Server 環境變數 (關鍵防禦)
+# 若由 Code-Server 內建終端執行 sbatch，Slurm 會將 VSCODE_IPC_HOOK_CLI 傳遞至計算節點。
+# 這會導致計算節點上的 code-server 誤判為 CLI Client（嘗試連向登入節點不存在的 IPC Socket），
+# 噴出 ENOENT 錯誤並於 1 秒內自我終止！
+# ------------------------------------------------------------------------------
+unset VSCODE_IPC_HOOK_CLI
+unset VSCODE_GIT_IPC_HANDLE
+unset VSCODE_PROXY_URI
+unset VSCODE_GIT_ASKPASS_EXTRA_ARGS
+unset VSCODE_GIT_ASKPASS_NODE
+unset VSCODE_GIT_ASKPASS_MAIN
+unset VSCODE_PYTHON_AUTOACTIVATE_GUARD
+unset GIT_ASKPASS
+unset TERM_PROGRAM
+unset BROWSER
+
+# 設定計算節點專屬的 XDG_RUNTIME_DIR (避免指向登入節點不存在的 /run/user/<uid>)
+export XDG_RUNTIME_DIR="/tmp/run-${USER}-${SLURM_JOB_ID:-$$}"
+mkdir -p -m 700 "${XDG_RUNTIME_DIR}"
+
 # 1. 尋找可用之 code-server 執行檔
 if [ -x "${HOME}/.local/bin/code-server" ]; then
     CODE_SERVER="${HOME}/.local/bin/code-server"

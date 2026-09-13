@@ -74,7 +74,7 @@
 > **結論：這份腳本在國網中心叢集上「可以執行」！**  
 > 我們透過 `sbatch --test-only` 實測驗證，帳號 `#SBATCH --account=GOV114022` 與分區 `#SBATCH --partition=ct112` **完全有效且通過排程器驗證**！
 
-但是，原始腳本有 **3 個潛在地雷**需要修正，否則容易執行失敗：
+但是，原始腳本有 **4 個潛在地雷**需要修正，否則容易執行失敗：
 
 1. **地雷一：輸出日誌目錄依賴 (`#SBATCH --output=logs/job-%j.out`)**  
    * **問題**：若您在某個沒有 `logs/` 資料夾的目錄下執行 `sbatch`，Slurm **不會自動建立目錄**，而是直接拋出 `_open_output_file: No such file or directory` 錯誤並強制取消作業！
@@ -84,6 +84,9 @@
 3. **地雷三：作業送出後不知道連線網址**  
    * **問題**：作業提交後被分派到計算節點（如 `icpnq101`），使用者必須手動等待並去 `cat logs/job-*.out` 才能找到網址。
    * **修復**：在腳本中將最新網址同步自動寫入 `~/.code-server-slurm-url.txt`，並提供專屬查詢指令 [`bash scripts/get_job_url.sh`](./scripts/get_job_url.sh)，點擊即可開啟！
+4. **地雷四：從 Code-Server 內建終端提交排程導致 IPC 污染（ENOENT Socket 報錯並立即中斷）**  
+   * **問題**：若使用者是在登入節點已開啟的 Code-Server / VS Code 網頁終端機中執行 `sbatch sbatch_code_cpu.slurm`，Slurm 預設會將終端機所有環境變數傳遞至計算節點（包含 `VSCODE_IPC_HOOK_CLI` 與 `XDG_RUNTIME_DIR=/run/user/<uid>`）。計算節點上的 `code-server` 啟動時偵測到 `VSCODE_IPC_HOOK_CLI`，會誤判為使用者要在既有視窗開檔，嘗試連向登入節點上不存在的 IPC Socket（如 `/run/user/10183/vscode-ipc-*.sock`），拋出 `error got error from Code {"error":{"errno":-2,"code":"ENOENT",...}}` 並在一秒內結束作業！
+   * **修復**：在腳本開頭加入環境隔離邏輯，主動 `unset VSCODE_IPC_HOOK_CLI` 等相關變數，並將 `XDG_RUNTIME_DIR` 重設為計算節點本地目錄（如 `/tmp/run-${USER}-${SLURM_JOB_ID}`），徹底避免跨節點 IPC 衝突。
 
 ---
 
