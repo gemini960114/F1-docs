@@ -352,12 +352,16 @@ fi
 > **這僅代表計算節點設定好了連線指向，並不代表登入節點上的 Proxy 伺服器正在運行！**  
 > 若登入節點沒有啟動 Proxy 服務，計算節點發出的外網請求會直接遭到 `Connection refused` 拒絕。
 
-### C. 一秒在登入節點啟動 Proxy
+### C. 一秒在登入節點啟動與關閉 Proxy
 在登入節點（`ilgn01`）執行以下指令即可常駐啟動代理伺服器：
 ```bash
+# 啟動 Proxy 服務 (tmux 背景常駐)
 bash ~/hpc-tutorial/07-compute-node-proxy/scripts/start.sh
+
+# 結束運算後關閉 Proxy 服務 (釋放資源)
+bash ~/hpc-tutorial/07-compute-node-proxy/scripts/stop.sh
 ```
-啟動後，計算節點上的 VS Code 就能**自動擁有外網能力**，順暢下載 Extensions、使用 GitHub Copilot、執行 `git clone` 或 `pip install`！
+啟動後，計算節點上的 VS Code 就能**自動擁有外網能力**，順暢下載 Extensions、使用 GitHub Copilot、執行 `git clone` 或 `pip install`！運算完畢後執行 `stop.sh` 即可關閉。
 
 > 👉 欲了解完整的安全 HTTP 代理架構、防 `ps aux` 密碼洩漏設計與國網內網拓撲，請參閱 **[第 07 章：計算節點對外連網與安全 HTTP Proxy 建置](../07-compute-node-proxy/README.md)**。
 

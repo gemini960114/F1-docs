@@ -136,6 +136,11 @@ cat ~/hpc-tutorial/08-ai-agent-slurm-pipeline/case_b_proxy/qc_proxy-*.out
 
 產生的 `multiqc_report.html` 同樣可藉由第 02 章與第 05 章的 `view_multiqc_report.sh` 透過 OOD 反向代理在瀏覽器中直接點擊預覽！
 
+```bash
+# 💡 若案例 B 任務已全數完成，可在登入節點關閉 Proxy 釋放資源：
+bash ~/hpc-tutorial/07-compute-node-proxy/scripts/stop.sh
+```
+
 ---
 
 ## 7. HPC 實戰全系列 8 大課程完結總結
