@@ -4,12 +4,14 @@ export default defineConfig({
   title: "國網創進一號 (f1) HPC 實戰教學手冊",
   description: "以 Code-Server Web UI 為核心工作台的超級電腦全流程實戰指南",
   head: [
-    ['link', { rel: 'icon', href: 'https://man.twcc.ai/favicon.ico' }],
+    ['link', { rel: 'icon', type: 'image/x-icon', href: 'https://www.nchc.org.tw/img/favicon.ico' }],
+    ['link', { rel: 'shortcut icon', type: 'image/x-icon', href: 'https://www.nchc.org.tw/img/favicon.ico' }],
     ['meta', { name: 'theme-color', content: '#0284c7' }]
   ],
   base: '/F1-docs/',
   ignoreDeadLinks: true,
   themeConfig: {
+    logo: 'https://www.nchc.org.tw/img/favicon.ico',
     nav: [
       { text: '首頁', link: '/' },
       { text: '課程大綱', link: '/guide/00_course_syllabus' },

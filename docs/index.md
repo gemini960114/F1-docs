@@ -42,7 +42,7 @@ features:
   - icon: 📊
     title: 第 06 章｜Slurm 語法精講與作業調度
     details: 官方規格詳解 (ct112/cf112/arm144)、資源配置黃金三角、郵件狀態通知、seff 效能與 OOM 診斷，以及 Singularity 容器排程。
-    link: /guide/06_slurm_syntax_and_job-management
+    link: /guide/06_slurm_syntax_and_job_management
     linkText: 規模化調度超級算力
   - icon: 🛡️
     title: 第 07 章｜計算節點安全 HTTP Proxy
