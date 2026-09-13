@@ -16,7 +16,7 @@
 - [5. 技能三：AI 自動管線重構與雙架構選型 (`ai-agent-slurm-pipeline`)](#_5-技能三-ai-自動管線重構與雙架構選型-ai-agent-slurm-pipeline)
 - [6. 技能四：網頁反向代理與常駐守護 (`web-service-reverse-proxy`)](#_6-技能四-網頁反向代理與常駐守護-web-service-reverse-proxy)
 - [7. 技能安裝與啟用指南 (`npx skills add` 與本地同步)](#_7-技能安裝與啟用指南-npx-skills-add-與本地同步)
-- [8. 實戰演練：從自然語言提問到合規派送](#_8-實戰演練-從自然語言提問到合規派送)
+- [8. 四大 HPC AI Agent Skills 實戰對話範例 (4-Round Interactive Walkthrough)](#_8-四大-hpc-ai-agent-skills-實戰對話範例-4-round-interactive-walkthrough)
 
 ---
 
@@ -213,31 +213,218 @@ bash ~/hpc-tutorial/09-skills-hub/sync_skills.sh
 
 ---
 
-## 8. 實戰演練：從自然語言提問到合規派送
+## 8. 四大 HPC AI Agent Skills 實戰對話範例 (4-Round Interactive Walkthrough)
 
-### 範例一：資源規格防呆與換算
-> **使用者提問**：  
-> *「我想要在創進一號跑一個 Python 批次資料分析，但我不知道怎麼寫 Slurm 腳本，大概需要 50GB 記憶體，幫我規劃一下。」*
+本節示範專案內 4 個 Skill 的實際使用方式。每一輪皆以**「使用者提問 ➔ AI 多輪追問確認 ➔ 產出與驗證 ➔ 派送/執行」**的完整生命週期呈現。AI 不會在資訊不足時盲目猜測，而是主動發起結構化引導，在確認合規後才動作。
 
-**AI 觸發技能後的專業回應流程**：
-1. **調用 `check_slurm_env.sh`**：取得可用的 `wallet` 計畫代號（如 `GOV114022`）。
-2. **規格換算與防呆**：
-   - 使用者需要 50GB 記憶體。
-   - 若在 `ct112`（每核 4.3GB）上，需要配置 `50 / 4.3 ≈ 12` 核心（獲得約 51.6 GB RAM）。
-   - 若在 `cf112`（每核 8.9GB）上，只需配置 `50 / 8.9 ≈ 6` 核心（獲得約 53.4 GB RAM）。
-   - 向使用者建議：「若您的程式支援多執行緒平行，推薦 `ct112` 12 核心；若程式多為單核計算，推薦使用 `cf112` 6 核心以減少 SU 核心時浪費。」
-3. **自動產生標頭規範完整、含 `set -euo pipefail` 的 `.slurm` 腳本**。
-4. **主動調用 `validate_slurm.sh`** 進行 `sbatch --test-only` 免扣點預檢，並回傳預計啟動時間！
+| 輪次 | 觸發 Skill | 實戰情境 | 核心價值 |
+| :--- | :--- | :--- | :--- |
+| **第一輪** | `slurm-job-advisor` | 派送一般運算作業，資源規劃與免扣點預檢 | 自動查驗 `wallet` 額度、防呆換算、`sbatch --test-only` 零扣點預檢 |
+| **第二輪** | `compute-node-proxy` | 計算節點需要連外網下載資料 | 自動探測/啟動 Proxy、修正 `no_proxy` 官網超時、作業完成收尾提醒 |
+| **第三輪** | `ai-agent-slurm-pipeline` | 把互動式多步驟腳本轉換為鏈式批次管線 | 純離線 vs 動態 Proxy 架構選型、`--dependency=afterok:` 自動接龍 |
+| **第四輪** | `web-service-reverse-proxy` | 在 OOD 子路徑背景啟動 Web 服務 | 動態尋找空閒 Port、適應 `/rnode/` 子路徑、`tmux` 背景守護免死鎖 |
 
-### 範例二：計算節點連網與 Proxy 防呆
-> **使用者提問**：  
-> *「我想寫個 Slurm 腳本在計算節點跑 PyTorch 模型微調，程式中需要自動從 Hugging Face 下載權重，該怎麼寫？」*
+---
 
-**AI 觸發技能後的專業回應流程**：
-1. **連網型態診斷與架構建議**：
-   - 詢問模型大小。若權重達數十 GB，優先建議先在登入節點執行 `huggingface-cli download` 儲存至 `/work`。
-   - 若確認需要在計算節點直接連線下載，啟動 Proxy 流程。
-2. **調用 `check_proxy.sh`** 探測登入節點 Proxy 狀態。若未啟動，指導使用者執行 `bash ~/hpc-tutorial/07-compute-node-proxy/scripts/start.sh`。
-3. **安全注入 `source set_compute_env.sh`**（走 InfiniBand 內網 `10.200.160.1:8888`，絕不暴露明文密碼）。
-4. **自動在腳本開頭加入 5 秒連線預檢**，若外網中斷則立即中止排程，確保不白扣計畫 SU 點數！
+### 第一輪：`slurm-job-advisor` — 派送一般運算作業與免扣點預檢
+
+#### 📖 情境設定
+使用者想在計算節點跑一個簡單的測試作業，但未指定計畫代號與佇列。
+
+> 🧑‍💻 **使用者提問**：  
+> *「我要派送 slurm job，1 core cpu 任務 sleep 100」*
+
+🤖 **AI 助手反應（主動載入 `slurm-job-advisor`，先探測即時環境）**：
+```bash
+bash <此 skill 的 scripts 目錄>/check_slurm_env.sh
+```
+*系統即時回報：帳號 `GOV114022` / `GOV108018` / `GOV115071` 等計畫餘額，以及 `development`、`ct112`、`cf112`、`hm112` 目前的閒置節點數。*
+
+💬 **AI 追問（多輪問答第 1 次）**：
+> 「這是一個 `sleep 100` 的輕量測試任務，推薦使用 **`development` 佇列**（1 核心、8 小時時限內享有最高優先權，幾乎秒排秒跑）。目前偵測到您有以下可用計畫代號，請問要從哪個扣點？」  
+> 1. `GOV115071`（餘額充裕）  
+> 2. `GOV114022`  
+> 3. `GOV108018`
+
+🧑‍💻 **使用者選擇**：`GOV115071`
+
+📝 **AI 自動產出腳本**（`sleep100.slurm`，含 `#SBATCH -A GOV115071`、`#SBATCH -p development`、`set -euo pipefail` 與診斷標頭），接著主動執行免扣點測試：
+```bash
+bash <此 skill 的 scripts 目錄>/validate_slurm.sh sleep100.slurm
+# ✅ 靜態檢查：Account、Partition 與資源比例合規
+# ✅ sbatch --test-only 免扣點預檢通過，預計立即啟動！
+```
+
+💬 **AI 回報**：
+> 「預檢已順利通過！請問是否現在為您正式提交至排程系統？」
+
+🧑‍💻 **使用者確認**：*「派送」*
+
+🚀 **AI 正式派送**：
+```bash
+sbatch sleep100.slurm
+# Submitted batch job 1073943
+```
+*主動提示使用者監控指令：`squeue -j 1073943`，並提醒作業結束後可用 `seff 1073943` 檢視 CPU 與記憶體真實利用率。*
+
+> 💡 **核心教學重點**：AI 絕不在缺少 `--account` 時隨機編造，而是列出即時 `wallet` 額度供使用者確認；資源規格亦會自動識別為「測試任務」而推薦最高優先權的 `development`，避免新手的除錯作業在常規佇列大排長龍。
+
+---
+
+### 第二輪：`compute-node-proxy` — 計算節點連外網與故障排查實戰
+
+#### 📖 情境設定
+使用者要在 Slurm 作業中建立資料夾並下載外部網頁，但計算節點處於實體隔離內網。
+
+> 🧑‍💻 **使用者提問**：  
+> *「我要重新派送這個工作：建立一個 ~/website 資料夾，然後下載 www.nchc.org.tw 這一頁面的資料」*
+
+🤖 **AI 助手反應（偵測到「下載外部網頁」關鍵字，主動觸發 `compute-node-proxy`）**：
+
+**1. 探測登入節點 Proxy 狀態**：
+```bash
+bash <此 skill 的 scripts 目錄>/check_proxy.sh
+# 🛑 Proxy 服務狀態: 🔴 尚未啟動
+```
+
+💬 **AI 主動告知**：
+> 「計算節點無外網連線能力。偵測到登入節點的 Proxy 服務尚未啟動，我將為您啟動背景代理隧道。」
+
+**2. 啟動背景代理**：
+```bash
+bash <此 skill 的 scripts 目錄>/start.sh
+# 🎉 HTTP Proxy 成功於背景 (tmux) 啟動！
+# 認證憑證已安全寫入 ~/.proxy_auth (權限 600)
+```
+
+**3. 產出排程腳本（`download_nchc.slurm`）**：
+- 動態載入 `source <此 skill 的 scripts 目錄>/set_compute_env.sh`（不將密碼明文暴露在指令或腳本中）。
+- 加入 Fail-Fast 5 秒連線預檢。
+- 執行 `mkdir -p ~/website && wget -nv -P ~/website https://www.nchc.org.tw`。
+
+**4. 第一次預檢遭遇失敗（多輪問答的關鍵：精準故障根因排查）**：
+```text
+❌ 錯誤：計算節點無法連線至 https://www.nchc.org.tw (逾時 5 秒)
+```
+🔍 **AI 診斷根因**：
+> 「排查發現：預設 `no_proxy` 包含了萬用字元 `*.nchc.org.tw`，導致這個對外公開網站被誤判為『內網直連』，跳過了 Proxy 隧道；但計算節點本身無外網，因而連線逾時。」
+
+🔧 **AI 自動修正腳本**（從 `no_proxy` 移除該萬用字元，僅保留 `10.0.0.0/8,172.16.0.0/12` 內網網段），並重新派送：
+```bash
+sbatch download_nchc.slurm
+# Submitted batch job 1073964 ➔ COMPLETED (狀態: 成功)
+# ~/website/index.html 下載完成！
+```
+
+**5. 作業完成後的生命週期收尾（步驟 5）**：
+💬 **AI 主動詢問**：
+> 「此次連網作業已順利完成，登入節點的 Proxy 服務目前仍在背景常駐運作（Port 8888）。是否需要現在關閉以釋放資源、降低資安暴露面？」
+
+🧑‍💻 **使用者確認**：*「關閉」*
+
+🧹 **AI 執行清理**：
+```bash
+bash <此 skill 的 scripts 目錄>/stop.sh
+# ✅ HTTP Proxy 服務已安全關閉！
+```
+
+> 💡 **核心教學重點**：AI 先探測再啟動，絕不在腳本留明文密碼；遇到外網連線逾時能準確定位出 `no_proxy` 萬用字元問題，且任務完成後主動提醒關閉 Proxy，避免長期佔用共用伺服器資源。
+
+---
+
+### 第三輪：`ai-agent-slurm-pipeline` — 互動腳本重構為鏈式批次管線
+
+#### 📖 情境設定
+使用者手上有一套在終端機逐步手動跑的分析流程，希望改寫為全自動接力的 Slurm 批次流水線。
+
+> 🧑‍💻 **使用者提問**：  
+> *「我有一支互動用的 shell 腳本，會依序做：1) 資料前處理與品質過濾 2) 主力序列比對 3) 產生分析報告，且中間會下載一份外部參考資料庫。想幫我改成 Slurm 批次管線。」*
+
+💬 **AI 追問（多輪問答第 1 次：架構選型決策）**：
+> 「請問這三個步驟中，外部參考資料庫**能否在登入節點預先下載好**（推薦架構 A：純離線模式），還是必須在計算節點運算當下動態連網下載（架構 B：動態 Proxy 模式）？」
+
+🧑‍💻 **使用者回應**：*「參考資料庫可以先在登入節點下載好，後面比對跟報告都是純離線運算。」*
+
+💬 **AI 追問（多輪問答第 2 次：資源與相依策略確認）**：
+> 「確認採用【架構 A：事前下載 ＋ 計算節點純離線】。請問三個階段各自預估的核心數與時限？若任一階段失敗，下游作業是否整條中斷？」
+
+🧑‍💻 **使用者回應**：*「前處理 4 核心 30 分鐘、比對 16 核心 4 小時、報告 2 核心 20 分鐘；任一步失敗就整條中斷即可。」*
+
+📝 **AI 產出三階段腳本並自動串接鏈式依賴**：
+```bash
+# 階段 1：資料前處理 (4 核心, 30 分鐘)
+JOB1=$(sbatch --parsable 01_preprocess.slurm)
+
+# 階段 2：主力序列比對 (16 核心, 4 小時，依賴 JOB1 成功執行)
+JOB2=$(sbatch --parsable --dependency=afterok:$JOB1 02_alignment.slurm)
+
+# 階段 3：產生分析報告 (2 核心, 20 分鐘，依賴 JOB2 成功執行)
+JOB3=$(sbatch --parsable --dependency=afterok:$JOB2 03_report.slurm)
+```
+每支腳本頂部皆包含 `set -euo pipefail`，確保上游只要遇到任何錯誤碼，下游 `afterok` 作業便會被排程器直接取消（DependencyNeverSatisfied），絕不浪費點數產出錯誤資料。
+
+🛡️ **AI 派送前主動預檢**：對三支腳本各自執行 `sbatch --test-only`，確認語法、分區與計畫額度皆完全合規後才正式接龍提交！
+
+> 💡 **核心教學重點**：AI 會先釐清「連網 vs 離線」架構決策（避免過度依賴 Proxy），再詢問資源規模與容錯策略，最後以 `--dependency=afterok:` 自動串接，徹底杜絕手動替換 Job ID 容易改錯的低級失誤。
+
+---
+
+### 第四輪：`web-service-reverse-proxy` — 在 OOD 子路徑背景啟動 Web 服務
+
+#### 📖 情境設定
+使用者想在 Open OnDemand (OOD) 的 code-server 瀏覽器環境中，啟動一個 Streamlit 數據儀表板供團隊即時檢視。
+
+> 🧑‍💻 **使用者提問**：  
+> *「我想在這個 code-server 環境跑一個 Streamlit app，讓我可以用瀏覽器打開看儀表板。」*
+
+💬 **AI 追問（多輪問答第 1 次：確認執行環境與埠號分配）**：
+> 「目前您是透過 Open OnDemand 的子路徑反向代理存取，Streamlit 預設埠號（8501）很容易與他人衝突。請問要指定特定埠號，還是由我為您**動態探測一個保證未佔用的空閒埠號**？」
+
+🧑‍💻 **使用者回應**：*「你幫我找一個空的就好。」*
+
+🔍 **AI 動態偵測可用空埠**：
+```bash
+python3 -c "import socket; s=socket.socket(); s.bind(('',0)); print(s.getsockname()[1])"
+# → 取得可用埠號: 41235
+```
+
+💬 **AI 追問（多輪問答第 2 次：子路徑前綴與背景常駐方式）**：
+> 「在 OOD 反向代理下，Streamlit 必須設定 `--server.baseUrlPath` 對齊路徑前綴，且必須透過 `tmux` 背景守護以防止終端輸入死鎖（SIGTTIN）。請提供您當前瀏覽器網址列中的代理路徑前綴（例如 `/rnode/<主機名>/<埠號>/`）？」
+
+🧑‍💻 **使用者提供前綴**：`/rnode/ilgn01/41235/`
+
+🚀 **AI 產出啟動指令並在背景常駐執行**：
+```bash
+tmux new-session -d -s streamlit_dash \
+  "streamlit run dashboard.py \
+     --server.port=41235 \
+     --server.baseUrlPath=/rnode/ilgn01/41235/ \
+     --server.headless=true \
+     --server.enableCORS=false"
+```
+
+🧪 **AI 主動驗證服務監聽狀態**：
+```bash
+curl -sI http://localhost:41235/rnode/ilgn01/41235/ | head -n 1
+# HTTP/1.1 200 OK  ➔ 服務正常監聽中！
+```
+
+💬 **AI 回報**：
+> 「Streamlit 儀表板已在背景成功啟動！  
+> 🔗 **瀏覽器存取網址**：`https://<OOD網址>/rnode/ilgn01/41235/`  
+> 💡 欲停止服務釋放連接埠，請執行：`tmux kill-session -t streamlit_dash`」
+
+> 💡 **核心教學重點**：AI 會主動避開固定埠號衝突，自動設定關鍵的 `baseUrlPath` 防止前端靜態資源破圖（404），並採用 `tmux` 避免終端關閉導致服務斷線，最後主動發送 HTTP 請求驗證服務存活。
+
+---
+
+### 📌 四輪共通核心設計哲學 (Core Design Patterns)
+
+回顧上述 4 個 Skill 的實戰歷程，AI Agent 始終遵循以下四大黃金法則：
+
+1. **絕不在資訊不全時盲目猜測**：計畫帳號、分區配比、連網型態、代理前綴等關鍵參數，一律透過多輪問答引導釐清。
+2. **執行前必定落實預檢（Fail-Fast）**：`sbatch --test-only` 免扣點驗證、5 秒連線探測、Port 存活檢測，寧可提前攔截也不讓錯誤作業消耗寶貴點數。
+3. **遇到失敗先診斷根因，而非暴力重試**：如同第二輪中準確抓出 `no_proxy` 萬用字元問題，排除真正問題後才再次派送。
+4. **主動提醒資源收尾（Teardown & Cleanup）**：排程結束後提醒關閉 Proxy 隧道、Web 服務提供明確關閉指令，杜絕佔用共用伺服器資源。
+
 
