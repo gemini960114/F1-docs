@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  title: "國網創進一號 (f1) HPC 實戰教學手冊",
+  title: "國網創進一號 (F1) HPC 教學手冊",
   description: "以 Code-Server Web UI 為核心工作台的超級電腦全流程實戰指南",
   head: [
     ['link', { rel: 'icon', type: 'image/x-icon', href: 'https://www.nchc.org.tw/img/favicon.ico' }],

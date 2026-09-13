@@ -1,4 +1,4 @@
-# HPC 實戰教學系列手冊 (HPC Tutorial Series)
+# 國網創進一號 (F1) HPC 教學手冊
 ### —— 以 Code-Server Web UI 為核心工作台的超級電腦全流程實戰指南
 
 歡迎來到高效能運算（High Performance Computing, HPC）實戰教學系列手冊！本教學專為在國家高速網路與計算中心（NCHC）創進一號（Taiwania 1 / f1）等超級電腦與叢集環境中的使用者、研究人員與開發者設計。

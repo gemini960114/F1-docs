@@ -2,9 +2,9 @@
 layout: home
 
 hero:
-  name: "國網創進一號 (f1) HPC 實戰手冊"
+  name: "國網創進一號 (F1) HPC 教學手冊"
   text: "以 Code-Server Web UI 為核心工作台"
-  tagline: "徹底告別純終端與 Vim！從 SSH/2FA 一次性起跑、反向代理、VS Code 雲端工作台、AI 工具鏈到生醫管線、Slurm 排程與計算節點 Proxy 穿透"
+  tagline: "徹底告別純終端與 Vim！從 SSH/2FA 一次性起跑、反向代理、VS Code 雲端工作台、AI 工具鏈到生醫管線與 Slurm 排程調度"
   actions:
     - theme: brand
       text: 進入課程總綱
